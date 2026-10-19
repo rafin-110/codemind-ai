@@ -1,0 +1,27 @@
+[02:21:37] browser: chrome 155.0.8059.80
+[02:21:41] app loaded at http://127.0.0.1:61619
+[02:21:41] screenshot 01_overview_empty.png
+[02:21:43] screenshot 02_upload_sample_loaded.png
+[02:21:45] analysis finished: 9 findings
+[02:21:46] screenshot 03_upload_analyzed.png
+[02:21:47] screenshot 04_overview_after_analysis.png
+[02:21:48] screenshot 05_agent_workflow.png
+[02:21:50] F-004 shown as Confirmed (baseline test failure linked)
+[02:21:51] screenshot 06_findings_F004_confirmed.png
+[02:21:52] screenshot 07_architecture_advisor.png
+[02:21:55] screenshot 08_proposal_F001.png
+[02:21:56] F-001 proposal rejected; no working copy made
+[02:21:56] screenshot 09_F001_rejected.png
+[02:21:59] screenshot 10_proposal_F004_attempt1.png
+[02:22:01] attempt 1 failed validation (real pytest failure); retry proposed
+[02:22:01] screenshot 11_F004_attempt2_after_failed_validation.png
+[02:22:03] attempt 2 validated: Passed, original unchanged
+[02:22:03] screenshot 12_validation_passed.png
+[02:22:03] downloaded JSON report -> docs/test-evidence/phase3_ui_report.json (68422 bytes)
+[02:22:03] downloaded Markdown report -> docs/test-evidence/phase3_ui_report.md (7065 bytes)
+[02:22:03] report checked: 9 findings, F-004 Confirmed, validations Failed->Passed, decisions rejected/approved/approved, original unchanged
+[02:22:04] screenshot 13_agent_workflow_after.png
+[02:22:08] screenshot 14_upload_untrusted_zip.png
+[02:22:09] uploaded ZIP (not trusted) analysed: 9 findings; no baseline test run for untrusted code
+[02:22:13] path-traversal ZIP refused: Archive rejected: entry '../../evil.py' escapes the workspace (path traversal)
+[02:22:13] screenshot 15_upload_traversal_refused.png

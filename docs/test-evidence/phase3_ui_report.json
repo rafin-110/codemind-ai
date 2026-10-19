@@ -1,0 +1,1848 @@
+{
+  "run_id": "ebe6ab30d74e",
+  "state": "VALIDATED",
+  "goal": "Understand the repository, find risks, and propose validated fixes.",
+  "plan": {
+    "goal": "Understand the repository, find risks, and propose validated fixes.",
+    "steps": [
+      {
+        "key": "understand",
+        "agent": "Repository Understanding Agent",
+        "description": "Read README/metadata, map structure, entry points and dependencies",
+        "enabled": true,
+        "reason": ""
+      },
+      {
+        "key": "analyze",
+        "agent": "Bug & Risk Analysis Agent",
+        "description": "Run AST rules R000-R009 on Python sources",
+        "enabled": true,
+        "reason": ""
+      },
+      {
+        "key": "baseline",
+        "agent": "Critic & Validation Agent",
+        "description": "Run the repository's tests on an untouched copy to confirm findings by execution",
+        "enabled": true,
+        "reason": ""
+      },
+      {
+        "key": "advise",
+        "agent": "Solution & Architecture Advisor",
+        "description": "Compare current approach with alternatives",
+        "enabled": true,
+        "reason": ""
+      },
+      {
+        "key": "prioritize",
+        "agent": "Planner / Orchestrator",
+        "description": "Rank findings by severity and confidence; pick next action",
+        "enabled": true,
+        "reason": ""
+      },
+      {
+        "key": "propose",
+        "agent": "Code Improvement Agent",
+        "description": "Propose a minimal patch for the finding you select",
+        "enabled": true,
+        "reason": ""
+      },
+      {
+        "key": "review",
+        "agent": "Critic & Validation Agent",
+        "description": "Critique the proposal before it reaches you",
+        "enabled": true,
+        "reason": ""
+      },
+      {
+        "key": "approve",
+        "agent": "Developer (human)",
+        "description": "Approve or reject the exact patch shown",
+        "enabled": true,
+        "reason": ""
+      },
+      {
+        "key": "validate",
+        "agent": "Critic & Validation Agent",
+        "description": "Apply to a working copy; syntax check, rule re-check, tests; retry up to 2 times",
+        "enabled": true,
+        "reason": ""
+      }
+    ],
+    "step_status": {
+      "understand": "done",
+      "analyze": "done",
+      "baseline": "done",
+      "advise": "done",
+      "prioritize": "done",
+      "propose": "done",
+      "review": "done",
+      "approve": "done",
+      "validate": "done"
+    }
+  },
+  "snapshot": {
+    "snapshot_id": "ebe6ab30d74e",
+    "source": "sample",
+    "files": [
+      {
+        "rel_path": "data/scores.json",
+        "size": 17,
+        "language": "JSON",
+        "sha256": "99497eab6ecf1e106d9aedd8cb3580f751438cb02c0674bbca61e352c3f12f01",
+        "skipped_reason": null
+      },
+      {
+        "rel_path": "grades/__init__.py",
+        "size": 29,
+        "language": "Python",
+        "sha256": "c573e21400d2ea823b01d2f529878a7d418136a8546f6b1a3db1f9734733476f",
+        "skipped_reason": null
+      },
+      {
+        "rel_path": "grades/cli.py",
+        "size": 730,
+        "language": "Python",
+        "sha256": "f04fe218f56c045313ffcc7446c99497fe29be0e390f9b89c4ef7d09eab60b7b",
+        "skipped_reason": null
+      },
+      {
+        "rel_path": "grades/stats.py",
+        "size": 708,
+        "language": "Python",
+        "sha256": "fcd4baf5142b422dc402816d1cad0013df5c27a45c0a7bbe75749dea76bfaa28",
+        "skipped_reason": null
+      },
+      {
+        "rel_path": "grades/storage.py",
+        "size": 925,
+        "language": "Python",
+        "sha256": "2b85628f0117fefbc067dfc7449283bf758577f6738fcda22a54242ceb17eb56",
+        "skipped_reason": null
+      },
+      {
+        "rel_path": "main.py",
+        "size": 112,
+        "language": "Python",
+        "sha256": "92d7adab0a1ab08686d37148b00f00e835412686b4e1e6e778a67b1a45711a29",
+        "skipped_reason": null
+      },
+      {
+        "rel_path": "README.md",
+        "size": 730,
+        "language": "Markdown",
+        "sha256": "ae044122771389eb260f103749cad2fe98b05bfc8378493224808b66db3dac25",
+        "skipped_reason": null
+      },
+      {
+        "rel_path": "requirements.txt",
+        "size": 10,
+        "language": "Text",
+        "sha256": "e5d9943702bb51c0b13a5891bf396d41a5b0d269f583ad57534e5021a32af50d",
+        "skipped_reason": null
+      },
+      {
+        "rel_path": "tests/conftest.py",
+        "size": 101,
+        "language": "Python",
+        "sha256": "c50c8305f585c9551191788e47ab0cbebac1b54229902d72a7bd11ce8f5ae4b5",
+        "skipped_reason": null
+      },
+      {
+        "rel_path": "tests/test_stats.py",
+        "size": 793,
+        "language": "Python",
+        "sha256": "2cab3b4d2093661292825d38a566e277bb31b481ae8151758221281e8eb32060",
+        "skipped_reason": null
+      },
+      {
+        "rel_path": "tests/test_storage.py",
+        "size": 616,
+        "language": "Python",
+        "sha256": "fbd930eb70ea7c9447462457ffbd15a9c96001a361b31b5ff61def766e8c56cb",
+        "skipped_reason": null
+      }
+    ],
+    "tree_text": "student_grades_app\n├── data/\n│   └── scores.json\n├── grades/\n│   ├── __init__.py\n│   ├── cli.py\n│   ├── stats.py\n│   └── storage.py\n├── tests/\n│   ├── conftest.py\n│   ├── test_stats.py\n│   └── test_storage.py\n├── main.py\n├── README.md\n└── requirements.txt",
+    "snapshot_hash": "ff45f3e510fd39ce1aef8308e55b3622ab2d2180a828019fe77b5c76e4f381c5",
+    "display_name": "student_grades_app.zip",
+    "ingest_warnings": [],
+    "trusted": true
+  },
+  "summary": {
+    "title": "Student Grades App (synthetic sample)",
+    "purpose": "A tiny command-line tool that reads student scores, computes the class average and letter grades, and looks students up in a SQLite database.",
+    "technologies": [
+      "JSON",
+      "Python",
+      "SQLite",
+      "pytest"
+    ],
+    "entry_points": [
+      "main.py"
+    ],
+    "modules": [
+      {
+        "path": "grades/__init__.py",
+        "role": "Student grade helpers.",
+        "functions": [],
+        "classes": [],
+        "imports": [],
+        "is_entry_point": false,
+        "is_test": false,
+        "docstring": "Student grade helpers."
+      },
+      {
+        "path": "grades/cli.py",
+        "role": "Interactive command line for the grades app.",
+        "functions": [
+          "read_scores",
+          "ask_student_count",
+          "open_report",
+          "run"
+        ],
+        "classes": [],
+        "imports": [
+          "subprocess",
+          "grades.stats"
+        ],
+        "is_entry_point": false,
+        "is_test": false,
+        "docstring": "Interactive command line for the grades app."
+      },
+      {
+        "path": "grades/stats.py",
+        "role": "Statistics helpers for student scores.",
+        "functions": [
+          "average",
+          "letter_grade",
+          "add_score",
+          "percentage"
+        ],
+        "classes": [],
+        "imports": [],
+        "is_entry_point": false,
+        "is_test": false,
+        "docstring": "Statistics helpers for student scores."
+      },
+      {
+        "path": "grades/storage.py",
+        "role": "Persistence helpers: JSON score files and a SQLite student table.",
+        "functions": [
+          "load_scores",
+          "create_db",
+          "add_student",
+          "find_student"
+        ],
+        "classes": [],
+        "imports": [
+          "json",
+          "sqlite3"
+        ],
+        "is_entry_point": false,
+        "is_test": false,
+        "docstring": "Persistence helpers: JSON score files and a SQLite student table."
+      },
+      {
+        "path": "main.py",
+        "role": "Entry point: Entry point for the Student Grades App.",
+        "functions": [],
+        "classes": [],
+        "imports": [
+          "grades.cli"
+        ],
+        "is_entry_point": true,
+        "is_test": false,
+        "docstring": "Entry point for the Student Grades App."
+      },
+      {
+        "path": "tests/conftest.py",
+        "role": "Test module (0 test functions)",
+        "functions": [],
+        "classes": [],
+        "imports": [
+          "sys",
+          "pathlib"
+        ],
+        "is_entry_point": false,
+        "is_test": true,
+        "docstring": ""
+      },
+      {
+        "path": "tests/test_stats.py",
+        "role": "Test module (6 test functions)",
+        "functions": [
+          "test_average_normal",
+          "test_average_single_value",
+          "test_average_empty_raises",
+          "test_letter_grade_boundaries",
+          "test_add_score_returns_history",
+          "test_percentage_zero_whole"
+        ],
+        "classes": [],
+        "imports": [
+          "pytest",
+          "grades.stats"
+        ],
+        "is_entry_point": false,
+        "is_test": true,
+        "docstring": ""
+      },
+      {
+        "path": "tests/test_storage.py",
+        "role": "Test module (3 test functions)",
+        "functions": [
+          "test_load_scores_valid_file",
+          "test_load_scores_missing_file_returns_empty",
+          "test_find_student"
+        ],
+        "classes": [],
+        "imports": [
+          "json",
+          "grades.storage"
+        ],
+        "is_entry_point": false,
+        "is_test": true,
+        "docstring": ""
+      }
+    ],
+    "dependencies": [
+      "pytest"
+    ],
+    "import_graph": {
+      "grades/__init__.py": [],
+      "grades/cli.py": [
+        "grades/stats.py"
+      ],
+      "grades/stats.py": [],
+      "grades/storage.py": [],
+      "main.py": [
+        "grades/cli.py"
+      ],
+      "tests/conftest.py": [],
+      "tests/test_stats.py": [
+        "grades/stats.py"
+      ],
+      "tests/test_storage.py": [
+        "grades/storage.py"
+      ]
+    },
+    "doc_gaps": [
+      "README.md: no installation/setup section",
+      "grades/cli.py:24 public function 'run' has no docstring",
+      "grades/storage.py:26 public function 'add_student' has no docstring"
+    ],
+    "evidence": [
+      {
+        "file": "README.md",
+        "line_start": 1,
+        "line_end": 1,
+        "snippet": "> 1 | # Student Grades App (synthetic sample)",
+        "note": "README title"
+      },
+      {
+        "file": "README.md",
+        "line_start": 7,
+        "line_end": 7,
+        "snippet": "> 7 | A tiny command-line tool that reads student scores, computes the class average and",
+        "note": "README purpose"
+      },
+      {
+        "file": "requirements.txt",
+        "line_start": 1,
+        "line_end": 1,
+        "snippet": "> 1 | pytest>=8",
+        "note": "dependency 'pytest'"
+      },
+      {
+        "file": "main.py",
+        "line_start": 5,
+        "line_end": 5,
+        "snippet": "  4 | \n> 5 | if __name__ == \"__main__\":\n  6 |     run()",
+        "note": "entry point (__main__ guard)"
+      }
+    ],
+    "readme_sections": [
+      "Features",
+      "Usage",
+      "Tests"
+    ],
+    "has_tests": true
+  },
+  "findings": [
+    {
+      "id": "F-001",
+      "rule_id": "R003",
+      "title": "Use of eval/exec in `read_scores()`",
+      "category": "Security",
+      "severity": "Critical",
+      "confidence": "Likely",
+      "file": "grades/cli.py",
+      "line": 11,
+      "evidence": {
+        "file": "grades/cli.py",
+        "line_start": 11,
+        "line_end": 11,
+        "snippet": "   9 |     \"\"\"Ask the user for a list of scores.\"\"\"\n  10 |     raw = input(\"Enter scores as a Python list, e.g. [80, 90]: \")\n> 11 |     return eval(raw)\n  12 | \n  13 | ",
+        "note": "`eval()` on user input from `input()`"
+      },
+      "why_problematic": "`eval`/`exec` run arbitrary Python code contained in a string.",
+      "impact": "If the string comes from a user or file, an attacker can run any command on the machine.",
+      "remediation": "Use `ast.literal_eval` for literals, or parse the input explicitly.",
+      "validation_method": "Test that valid literal input still works and that code-like input is rejected.",
+      "verification": "Not run",
+      "source": "ast-rule",
+      "symbol": "read_scores",
+      "extra": {
+        "func": "eval",
+        "from_input": true,
+        "detail": "`eval()` on user input from `input()`"
+      }
+    },
+    {
+      "id": "F-002",
+      "rule_id": "R005",
+      "title": "Shell command execution in `open_report()`",
+      "category": "Security",
+      "severity": "High",
+      "confidence": "Likely",
+      "file": "grades/cli.py",
+      "line": 21,
+      "evidence": {
+        "file": "grades/cli.py",
+        "line_start": 21,
+        "line_end": 21,
+        "snippet": "  19 | def open_report(path):\n  20 |     \"\"\"Open the generated report in a text editor.\"\"\"\n> 21 |     subprocess.run(\"notepad \" + path, shell=True)\n  22 | \n  23 | ",
+        "note": "`subprocess.run(..., shell=True)`"
+      },
+      "why_problematic": "`shell=True` / `os.system` pass a string to the shell, so spaces and special characters in variables are interpreted as shell syntax.",
+      "impact": "Command injection and broken paths containing spaces.",
+      "remediation": "Pass the command as a list of arguments with `shell=False`.",
+      "validation_method": "Test with a path containing spaces; review that no shell features were needed.",
+      "verification": "Not run",
+      "source": "ast-rule",
+      "symbol": "open_report",
+      "extra": {
+        "call": "subprocess.run",
+        "detail": "`subprocess.run(..., shell=True)`"
+      }
+    },
+    {
+      "id": "F-003",
+      "rule_id": "R007",
+      "title": "SQL built from string formatting in `find_student()`",
+      "category": "Security",
+      "severity": "High",
+      "confidence": "Likely",
+      "file": "grades/storage.py",
+      "line": 34,
+      "evidence": {
+        "file": "grades/storage.py",
+        "line_start": 34,
+        "line_end": 34,
+        "snippet": "  32 |     \"\"\"Return rows for the given student name.\"\"\"\n  33 |     cursor = conn.cursor()\n> 34 |     cursor.execute(f\"SELECT name, score FROM students WHERE name = '{name}'\")\n  35 |     return cursor.fetchall()",
+        "note": "query passed to `.execute()` is built dynamically"
+      },
+      "why_problematic": "The SQL text is built with f-strings / `%` / `+` / `.format`, so input becomes part of the query.",
+      "impact": "SQL injection: input like `' OR '1'='1` changes the query; quotes in names break it.",
+      "remediation": "Use a parameterised query (`?` placeholders and a parameters tuple).",
+      "validation_method": "Run the existing query tests and a test with a quote in the input.",
+      "verification": "Not run",
+      "source": "ast-rule",
+      "symbol": "find_student",
+      "extra": {
+        "query_kind": "JoinedStr",
+        "detail": "query passed to `.execute()` is built dynamically"
+      }
+    },
+    {
+      "id": "F-004",
+      "rule_id": "R001",
+      "title": "Possible division by zero in `average()`",
+      "category": "Logic",
+      "severity": "High",
+      "confidence": "Confirmed",
+      "file": "grades/stats.py",
+      "line": 7,
+      "evidence": {
+        "file": "grades/stats.py",
+        "line_start": 7,
+        "line_end": 7,
+        "snippet": "  5 |     \"\"\"Return the mean of a list of scores.\"\"\"\n  6 |     total = sum(scores)\n> 7 |     return total / len(scores)\n  8 | \n  9 | ",
+        "note": "denominator `len(scores)` is not checked for zero"
+      },
+      "why_problematic": "The denominator can be zero (e.g. an empty list) and there is no visible guard before the division.",
+      "impact": "ZeroDivisionError crashes the caller on boundary input such as an empty list.",
+      "remediation": "Check the denominator first and either return a documented default or raise a clear ValueError.",
+      "validation_method": "Run a test that calls the function with an empty / zero input and checks the documented behaviour.",
+      "verification": "Passed",
+      "source": "ast-rule",
+      "symbol": "average",
+      "extra": {
+        "var": "scores",
+        "kind": "len",
+        "denominator": "len(scores)",
+        "detail": "denominator `len(scores)` is not checked for zero",
+        "confirmed_by": [
+          "tests.test_stats::test_average_empty_raises"
+        ]
+      }
+    },
+    {
+      "id": "F-005",
+      "rule_id": "R006",
+      "title": "Hard-coded secret",
+      "category": "Security",
+      "severity": "High",
+      "confidence": "Potential",
+      "file": "grades/storage.py",
+      "line": 6,
+      "evidence": {
+        "file": "grades/storage.py",
+        "line_start": 6,
+        "line_end": 6,
+        "snippet": "  4 | import sqlite3\n  5 | \n> 6 | API_KEY = \"sk-d…[REDACTED]\"\n  7 | \n  8 | ",
+        "note": "`API_KEY` is assigned a literal credential-like string"
+      },
+      "why_problematic": "A credential-like value is written directly in source code.",
+      "impact": "Anyone with access to the code or its history gets the secret; rotating it needs a code change.",
+      "remediation": "Read the value from an environment variable or a secrets manager.",
+      "validation_method": "Check the module still imports and the value is read from the environment.",
+      "verification": "Not run",
+      "source": "ast-rule",
+      "symbol": "",
+      "extra": {
+        "name": "API_KEY",
+        "detail": "`API_KEY` is assigned a literal credential-like string"
+      }
+    },
+    {
+      "id": "F-006",
+      "rule_id": "R008",
+      "title": "Unvalidated numeric input in `ask_student_count()`",
+      "category": "Input handling",
+      "severity": "Medium",
+      "confidence": "Likely",
+      "file": "grades/cli.py",
+      "line": 16,
+      "evidence": {
+        "file": "grades/cli.py",
+        "line_start": 16,
+        "line_end": 16,
+        "snippet": "  14 | def ask_student_count():\n  15 |     \"\"\"Ask how many students are in the class.\"\"\"\n> 16 |     return int(input(\"How many students? \"))\n  17 | \n  18 | ",
+        "note": "`int(input(...))` without try/except ValueError"
+      },
+      "why_problematic": "`int()`/`float()` is applied directly to `input()` with no error handling.",
+      "impact": "Typing a non-number crashes the program with ValueError.",
+      "remediation": "Wrap the conversion in try/except ValueError and ask again or report a clear error.",
+      "validation_method": "Manual or scripted test with non-numeric input.",
+      "verification": "Not run",
+      "source": "ast-rule",
+      "symbol": "ask_student_count",
+      "extra": {
+        "detail": "`int(input(...))` without try/except ValueError"
+      }
+    },
+    {
+      "id": "F-007",
+      "rule_id": "R004",
+      "title": "Mutable default argument in `add_score()`",
+      "category": "Logic",
+      "severity": "Medium",
+      "confidence": "Likely",
+      "file": "grades/stats.py",
+      "line": 23,
+      "evidence": {
+        "file": "grades/stats.py",
+        "line_start": 23,
+        "line_end": 23,
+        "snippet": "  21 | \n  22 | \n> 23 | def add_score(score, history=[]):\n  24 |     \"\"\"Append a score to the history and return it.\"\"\"\n  25 |     history.append(score)",
+        "note": "parameter `history` defaults to `[]`"
+      },
+      "why_problematic": "Default values are created once, so a default list/dict is shared between calls.",
+      "impact": "Data leaks between calls: the second call sees values from the first.",
+      "remediation": "Use `None` as the default and create a new object inside the function.",
+      "validation_method": "Test that two calls without the argument return independent results.",
+      "verification": "Not run",
+      "source": "ast-rule",
+      "symbol": "add_score",
+      "extra": {
+        "param": "history",
+        "default": "[]",
+        "detail": "parameter `history` defaults to `[]`"
+      }
+    },
+    {
+      "id": "F-008",
+      "rule_id": "R002",
+      "title": "Exception silently swallowed in `load_scores()`",
+      "category": "Error handling",
+      "severity": "Medium",
+      "confidence": "Likely",
+      "file": "grades/storage.py",
+      "line": 14,
+      "evidence": {
+        "file": "grades/storage.py",
+        "line_start": 14,
+        "line_end": 14,
+        "snippet": "  12 |         with open(path, encoding=\"utf-8\") as fh:\n  13 |             return json.load(fh)\n> 14 |     except:\n  15 |         pass\n  16 |     return []",
+        "note": "bare `except:` with only `pass`"
+      },
+      "why_problematic": "A bare `except:` (or `except Exception: pass`) hides every error, including typos, KeyboardInterrupt and corrupted data.",
+      "impact": "Failures turn into silent wrong results that are hard to debug.",
+      "remediation": "Catch only the exceptions you expect (e.g. OSError, ValueError) and handle or report them.",
+      "validation_method": "Run existing tests; add a test that the expected error path still returns the fallback.",
+      "verification": "Not run",
+      "source": "ast-rule",
+      "symbol": "load_scores",
+      "extra": {
+        "bare": true,
+        "body_is_pass": true,
+        "detail": "bare `except:` with only `pass`"
+      }
+    },
+    {
+      "id": "F-009",
+      "rule_id": "R009",
+      "title": "Comparison to None with == in `letter_grade()`",
+      "category": "Style",
+      "severity": "Low",
+      "confidence": "Likely",
+      "file": "grades/stats.py",
+      "line": 12,
+      "evidence": {
+        "file": "grades/stats.py",
+        "line_start": 12,
+        "line_end": 12,
+        "snippet": "  10 | def letter_grade(score):\n  11 |     \"\"\"Convert a numeric score to a letter grade.\"\"\"\n> 12 |     if score == None:\n  13 |         return \"N/A\"\n  14 |     if score >= 90:",
+        "note": "`score == None` uses == with None"
+      },
+      "why_problematic": "`== None` calls the object's __eq__, which can be overridden; PEP 8 requires `is None`.",
+      "impact": "Usually harmless, but can give wrong answers for objects such as NumPy arrays.",
+      "remediation": "Use `is None` / `is not None`.",
+      "validation_method": "Existing tests keep passing.",
+      "verification": "Not run",
+      "source": "ast-rule",
+      "symbol": "letter_grade",
+      "extra": {
+        "detail": "`score == None` uses == with None"
+      }
+    }
+  ],
+  "recommendations": {
+    "F-001": {
+      "finding_id": "F-001",
+      "current_approach": "`read_scores()` evaluates a string as Python code with `eval`.",
+      "alternatives": [
+        {
+          "name": "ast.literal_eval",
+          "pros": [
+            "Accepts Python literals only",
+            "One-line change"
+          ],
+          "cons": [
+            "Still accepts any literal type, so the result must be validated"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "No effect"
+        },
+        {
+          "name": "Explicit parsing (e.g. split on commas, float() each item)",
+          "pros": [
+            "Strictest validation",
+            "Clear error messages"
+          ],
+          "cons": [
+            "More code"
+          ],
+          "cost": "Medium",
+          "complexity": "Medium",
+          "maintainability": "Improves",
+          "performance": "No effect"
+        },
+        {
+          "name": "json.loads",
+          "pros": [
+            "Standard format"
+          ],
+          "cons": [
+            "Different syntax from Python lists for users"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "No effect"
+        }
+      ],
+      "recommended": "ast.literal_eval",
+      "rationale": "It removes code execution with the smallest interface change; stricter parsing can follow.",
+      "assumptions": [
+        "Finding confidence is 'Likely': treat as a strong signal.",
+        "The repository has tests, so a change can be validated by running them."
+      ],
+      "next_action": "Select this finding and ask the Code Improvement Agent for a proposal.",
+      "keep_current": false,
+      "text_origin": "deterministic"
+    },
+    "F-002": {
+      "finding_id": "F-002",
+      "current_approach": "`open_report()` builds a shell command string and runs it with the shell.",
+      "alternatives": [
+        {
+          "name": "Pass an argument list with shell=False",
+          "pros": [
+            "No shell interpretation",
+            "Paths with spaces work"
+          ],
+          "cons": [
+            "Shell features (pipes, globs) are unavailable"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "Slightly faster"
+        },
+        {
+          "name": "Use a platform API (e.g. os.startfile / webbrowser) instead of a shell",
+          "pros": [
+            "No subprocess at all"
+          ],
+          "cons": [
+            "Platform-specific"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "No effect"
+        },
+        {
+          "name": "shlex.quote the variables",
+          "pros": [
+            "Keeps the shell"
+          ],
+          "cons": [
+            "Easy to get wrong; still a shell"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Neutral",
+          "performance": "No effect"
+        }
+      ],
+      "recommended": "Pass an argument list with shell=False",
+      "rationale": "Nothing in the command needs shell features, so the shell only adds risk.",
+      "assumptions": [
+        "Finding confidence is 'Likely': treat as a strong signal.",
+        "The repository has tests, so a change can be validated by running them."
+      ],
+      "next_action": "Select this finding and ask the Code Improvement Agent for a proposal.",
+      "keep_current": false,
+      "text_origin": "deterministic"
+    },
+    "F-003": {
+      "finding_id": "F-003",
+      "current_approach": "`find_student()` builds SQL by inserting values into the query text.",
+      "alternatives": [
+        {
+          "name": "Parameterised query with placeholders",
+          "pros": [
+            "Prevents injection",
+            "Handles quotes in data"
+          ],
+          "cons": [
+            "None for this case"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "Same or faster (statement caching)"
+        },
+        {
+          "name": "ORM / query builder (e.g. SQLAlchemy)",
+          "pros": [
+            "Safe by default for larger apps"
+          ],
+          "cons": [
+            "New dependency; large change for a small app"
+          ],
+          "cost": "High",
+          "complexity": "High",
+          "maintainability": "Mixed",
+          "performance": "Some overhead"
+        },
+        {
+          "name": "Escape quotes manually",
+          "pros": [
+            "No API change"
+          ],
+          "cons": [
+            "Fragile; easy to miss cases"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Worse",
+          "performance": "No effect"
+        }
+      ],
+      "recommended": "Parameterised query with placeholders",
+      "rationale": "The DB driver already supports it; an ORM would be an unnecessary rewrite for this project.",
+      "assumptions": [
+        "Finding confidence is 'Likely': treat as a strong signal.",
+        "The repository has tests, so a change can be validated by running them."
+      ],
+      "next_action": "Select this finding and ask the Code Improvement Agent for a proposal.",
+      "keep_current": false,
+      "text_origin": "deterministic"
+    },
+    "F-004": {
+      "finding_id": "F-004",
+      "current_approach": "`average()` divides by `len(scores)` without checking for zero.",
+      "alternatives": [
+        {
+          "name": "Return a neutral default (e.g. 0.0) for empty/zero input",
+          "pros": [
+            "Callers never crash",
+            "Keeps the return type"
+          ],
+          "cons": [
+            "Silently hides a likely caller mistake",
+            "0.0 can be mistaken for a real average"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Neutral",
+          "performance": "No measurable cost"
+        },
+        {
+          "name": "Raise a clear ValueError for empty/zero input",
+          "pros": [
+            "Fails fast with a readable message",
+            "Matches Python's own `statistics.mean([])` behaviour"
+          ],
+          "cons": [
+            "Every caller must handle the error"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "No measurable cost"
+        },
+        {
+          "name": "Return None (Optional result)",
+          "pros": [
+            "Explicit 'no value' signal"
+          ],
+          "cons": [
+            "Callers that format or add the result will crash later with a less clear error"
+          ],
+          "cost": "Low",
+          "complexity": "Medium (type changes)",
+          "maintainability": "Worse without type hints",
+          "performance": "No measurable cost"
+        },
+        {
+          "name": "Use statistics.mean from the standard library",
+          "pros": [
+            "Well tested",
+            "Raises StatisticsError on empty data"
+          ],
+          "cons": [
+            "Changes the exception type callers see"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "Slightly slower for large lists"
+        }
+      ],
+      "recommended": "Guard the denominator; prefer raising ValueError unless the project's tests or docs specify a default",
+      "rationale": "Both a default and an exception are valid designs; the project's own tests are the best evidence of intended behaviour, so the validator's test run decides between them.",
+      "assumptions": [
+        "Finding confidence is 'Confirmed': treat as a strong signal.",
+        "The repository has tests, so a change can be validated by running them."
+      ],
+      "next_action": "Select this finding and ask the Code Improvement Agent for a proposal.",
+      "keep_current": false,
+      "text_origin": "deterministic"
+    },
+    "F-005": {
+      "finding_id": "F-005",
+      "current_approach": "`API_KEY` is hard-coded in source.",
+      "alternatives": [
+        {
+          "name": "Read from an environment variable",
+          "pros": [
+            "No secret in code or git history"
+          ],
+          "cons": [
+            "Must be set in each environment"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "No effect"
+        },
+        {
+          "name": "Secrets manager / keyring",
+          "pros": [
+            "Central rotation and audit"
+          ],
+          "cons": [
+            "Extra dependency and setup"
+          ],
+          "cost": "Medium",
+          "complexity": "Medium",
+          "maintainability": "Improves",
+          "performance": "Network call at start-up"
+        },
+        {
+          "name": "Keep it in code (only if it is a public, non-secret identifier)",
+          "pros": [
+            "No change"
+          ],
+          "cons": [
+            "Unsafe if it is a real credential"
+          ],
+          "cost": "None",
+          "complexity": "None",
+          "maintainability": "Neutral",
+          "performance": "No effect"
+        }
+      ],
+      "recommended": "Read from an environment variable",
+      "rationale": "It is the smallest change that removes the value from source; the leaked value must also be rotated.",
+      "assumptions": [
+        "Finding confidence is 'Potential': confirm the risk before changing code.",
+        "The repository has tests, so a change can be validated by running them.",
+        "If the value was a real credential it is already exposed and must be rotated."
+      ],
+      "next_action": "Select this finding and ask the Code Improvement Agent for a proposal.",
+      "keep_current": false,
+      "text_origin": "deterministic"
+    },
+    "F-006": {
+      "finding_id": "F-006",
+      "current_approach": "`ask_student_count()` converts raw user input to a number with no error handling.",
+      "alternatives": [
+        {
+          "name": "try/except ValueError with a re-prompt loop",
+          "pros": [
+            "Friendly UX"
+          ],
+          "cons": [
+            "Interactive loop is harder to test"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "No effect"
+        },
+        {
+          "name": "Validate and raise a clear error",
+          "pros": [
+            "Simple and testable"
+          ],
+          "cons": [
+            "Program still stops"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "No effect"
+        },
+        {
+          "name": "Use a CLI parser (argparse) instead of input()",
+          "pros": [
+            "Validation built in",
+            "Scriptable"
+          ],
+          "cons": [
+            "Changes how users run the tool"
+          ],
+          "cost": "Medium",
+          "complexity": "Medium",
+          "maintainability": "Improves",
+          "performance": "No effect"
+        }
+      ],
+      "recommended": "try/except ValueError with a re-prompt loop",
+      "rationale": "Keeps the interactive design; the right UX depends on the developer, so no automatic patch is offered.",
+      "assumptions": [
+        "Finding confidence is 'Likely': treat as a strong signal.",
+        "The repository has tests, so a change can be validated by running them."
+      ],
+      "next_action": "Apply the recommended pattern manually; no automatic patch is offered for interactive input.",
+      "keep_current": false,
+      "text_origin": "deterministic"
+    },
+    "F-007": {
+      "finding_id": "F-007",
+      "current_approach": "`add_score()` uses a mutable object as a default argument value.",
+      "alternatives": [
+        {
+          "name": "None sentinel and create the object inside the function",
+          "pros": [
+            "Standard Python idiom",
+            "Each call gets a fresh object"
+          ],
+          "cons": [
+            "Two extra lines"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "No effect"
+        },
+        {
+          "name": "Use an immutable default (tuple) and copy",
+          "pros": [
+            "No sentinel"
+          ],
+          "cons": [
+            "Changes the type"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Neutral",
+          "performance": "No effect"
+        }
+      ],
+      "recommended": "None sentinel and create the object inside the function",
+      "rationale": "It is the idiomatic fix and keeps the public signature compatible.",
+      "assumptions": [
+        "Finding confidence is 'Likely': treat as a strong signal.",
+        "The repository has tests, so a change can be validated by running them."
+      ],
+      "next_action": "Select this finding and ask the Code Improvement Agent for a proposal.",
+      "keep_current": false,
+      "text_origin": "deterministic"
+    },
+    "F-008": {
+      "finding_id": "F-008",
+      "current_approach": "`load_scores()` catches every exception and continues silently.",
+      "alternatives": [
+        {
+          "name": "Catch only expected exceptions (OSError, ValueError) and keep the fallback",
+          "pros": [
+            "Real bugs still surface",
+            "Expected failures keep current behaviour"
+          ],
+          "cons": [
+            "Must know which errors are expected"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "No effect"
+        },
+        {
+          "name": "Log the error, then return the fallback",
+          "pros": [
+            "Failures become visible in logs"
+          ],
+          "cons": [
+            "Still hides programming errors from callers"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "No effect"
+        },
+        {
+          "name": "Let the exception propagate",
+          "pros": [
+            "Simplest; caller decides"
+          ],
+          "cons": [
+            "Changes behaviour for callers that relied on the fallback"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "No effect"
+        }
+      ],
+      "recommended": "Catch only expected exceptions (OSError, ValueError) and keep the fallback",
+      "rationale": "It removes the risk while keeping the function's documented fallback behaviour.",
+      "assumptions": [
+        "Finding confidence is 'Likely': treat as a strong signal.",
+        "The repository has tests, so a change can be validated by running them."
+      ],
+      "next_action": "Select this finding and ask the Code Improvement Agent for a proposal.",
+      "keep_current": false,
+      "text_origin": "deterministic"
+    },
+    "F-009": {
+      "finding_id": "F-009",
+      "current_approach": "`letter_grade()` compares with None using `==`.",
+      "alternatives": [
+        {
+          "name": "Use `is None`",
+          "pros": [
+            "PEP 8 idiom",
+            "Cannot be fooled by custom __eq__"
+          ],
+          "cons": [
+            "None"
+          ],
+          "cost": "Low",
+          "complexity": "Low",
+          "maintainability": "Improves",
+          "performance": "Marginally faster"
+        },
+        {
+          "name": "Keep `== None`",
+          "pros": [
+            "No change"
+          ],
+          "cons": [
+            "Lint warning; wrong for some types (e.g. NumPy arrays)"
+          ],
+          "cost": "None",
+          "complexity": "None",
+          "maintainability": "Neutral",
+          "performance": "No effect"
+        }
+      ],
+      "recommended": "Use `is None`",
+      "rationale": "Low risk either way; with plain numbers the current code works, so this is optional polish.",
+      "assumptions": [
+        "Finding confidence is 'Likely': treat as a strong signal.",
+        "The repository has tests, so a change can be validated by running them."
+      ],
+      "next_action": "Optional: current code is acceptable for plain numbers; fix only if you want lint-clean code.",
+      "keep_current": true,
+      "text_origin": "deterministic"
+    }
+  },
+  "proposals": [
+    {
+      "patch_id": "P-001-1-14c0c7",
+      "finding_id": "F-001",
+      "strategy_index": 0,
+      "strategy_name": "Use ast.literal_eval",
+      "root_cause": "Use of eval/exec in `read_scores()` at grades/cli.py:11: `eval()` on user input from `input()`. `eval`/`exec` run arbitrary Python code contained in a string.",
+      "intended_behaviour": "Replace `eval` with `ast.literal_eval` (literals only).",
+      "edits": [
+        {
+          "rel_path": "grades/cli.py",
+          "original_sha256": "f04fe218f56c045313ffcc7446c99497fe29be0e390f9b89c4ef7d09eab60b7b",
+          "new_content": "<753 characters omitted; see unified_diff>"
+        }
+      ],
+      "unified_diff": "--- a/grades/cli.py\n+++ b/grades/cli.py\n@@ -1,5 +1,6 @@\n \"\"\"Interactive command line for the grades app.\"\"\"\n \n+import ast\n import subprocess\n \n from grades.stats import average, letter_grade\n@@ -8,7 +9,7 @@\n def read_scores():\n     \"\"\"Ask the user for a list of scores.\"\"\"\n     raw = input(\"Enter scores as a Python list, e.g. [80, 90]: \")\n-    return eval(raw)\n+    return ast.literal_eval(raw)\n \n \n def ask_student_count():\n",
+      "affected_files": [
+        "grades/cli.py"
+      ],
+      "regression_risks": [
+        "Input that was valid Python *code* but not a literal is now rejected (intended)."
+      ],
+      "suggested_tests": [
+        "valid literal input such as `[80, 90]` still works",
+        "code-like input such as `__import__('os')` raises ValueError"
+      ],
+      "base_snapshot_hash": "ff45f3e510fd39ce1aef8308e55b3622ab2d2180a828019fe77b5c76e4f381c5",
+      "patch_hash": "14c0c79f5813941847f0501f03ee4ea731cab7bd4be8e48be0f88b212e408578",
+      "attempt": 1,
+      "created_at": "2026-10-19T20:51:54+00:00",
+      "text_origin": "deterministic"
+    },
+    {
+      "patch_id": "P-004-1-9b7e02",
+      "finding_id": "F-004",
+      "strategy_index": 0,
+      "strategy_name": "Return a safe default",
+      "root_cause": "Possible division by zero in `average()` at grades/stats.py:7: denominator `len(scores)` is not checked for zero. The denominator can be zero (e.g. an empty list) and there is no visible guard before the division.",
+      "intended_behaviour": "Guard the denominator and return 0.0 for empty/zero input (least disruptive: callers keep getting a float).",
+      "edits": [
+        {
+          "rel_path": "grades/stats.py",
+          "original_sha256": "fcd4baf5142b422dc402816d1cad0013df5c27a45c0a7bbe75749dea76bfaa28",
+          "new_content": "<746 characters omitted; see unified_diff>"
+        }
+      ],
+      "unified_diff": "--- a/grades/stats.py\n+++ b/grades/stats.py\n@@ -4,6 +4,8 @@\n def average(scores):\n     \"\"\"Return the mean of a list of scores.\"\"\"\n     total = sum(scores)\n+    if not scores:\n+        return 0.0\n     return total / len(scores)\n \n \n",
+      "affected_files": [
+        "grades/stats.py"
+      ],
+      "regression_risks": [
+        "Callers that relied on ZeroDivisionError (unlikely) see a different result/exception."
+      ],
+      "suggested_tests": [
+        "normal input: `average([80, 90, 100])` returns the mean",
+        "boundary: a single element",
+        "invalid/boundary: empty input follows the chosen behaviour"
+      ],
+      "base_snapshot_hash": "ff45f3e510fd39ce1aef8308e55b3622ab2d2180a828019fe77b5c76e4f381c5",
+      "patch_hash": "9b7e02a2c369863aeff5000fac1394f93dcafaf531d4a1864d73b6d60641798d",
+      "attempt": 1,
+      "created_at": "2026-10-19T20:51:58+00:00",
+      "text_origin": "deterministic"
+    },
+    {
+      "patch_id": "P-004-2-667f1e",
+      "finding_id": "F-004",
+      "strategy_index": 1,
+      "strategy_name": "Raise ValueError",
+      "root_cause": "Possible division by zero in `average()` at grades/stats.py:7: denominator `len(scores)` is not checked for zero. The denominator can be zero (e.g. an empty list) and there is no visible guard before the division. Previous attempt failed validation (tests.test_stats::test_average_empty_raises).",
+      "intended_behaviour": "Guard the denominator and raise a clear ValueError for empty/zero input.",
+      "edits": [
+        {
+          "rel_path": "grades/stats.py",
+          "original_sha256": "fcd4baf5142b422dc402816d1cad0013df5c27a45c0a7bbe75749dea76bfaa28",
+          "new_content": "<780 characters omitted; see unified_diff>"
+        }
+      ],
+      "unified_diff": "--- a/grades/stats.py\n+++ b/grades/stats.py\n@@ -4,6 +4,8 @@\n def average(scores):\n     \"\"\"Return the mean of a list of scores.\"\"\"\n     total = sum(scores)\n+    if not scores:\n+        raise ValueError(\"scores must not be empty\")\n     return total / len(scores)\n \n \n",
+      "affected_files": [
+        "grades/stats.py"
+      ],
+      "regression_risks": [
+        "Callers that relied on ZeroDivisionError (unlikely) see a different result/exception."
+      ],
+      "suggested_tests": [
+        "normal input: `average([80, 90, 100])` returns the mean",
+        "boundary: a single element",
+        "invalid/boundary: empty input follows the chosen behaviour"
+      ],
+      "base_snapshot_hash": "ff45f3e510fd39ce1aef8308e55b3622ab2d2180a828019fe77b5c76e4f381c5",
+      "patch_hash": "667f1e394e93f14a79c5f49c66c0a8f0e758f888b215e4546bed281885632f8b",
+      "attempt": 2,
+      "created_at": "2026-10-19T20:52:01+00:00",
+      "text_origin": "deterministic"
+    }
+  ],
+  "reviews": {
+    "P-001-1-14c0c7": {
+      "patch_id": "P-001-1-14c0c7",
+      "in_scope": true,
+      "addresses_finding": true,
+      "issues": []
+    },
+    "P-004-1-9b7e02": {
+      "patch_id": "P-004-1-9b7e02",
+      "in_scope": true,
+      "addresses_finding": true,
+      "issues": []
+    },
+    "P-004-2-667f1e": {
+      "patch_id": "P-004-2-667f1e",
+      "in_scope": true,
+      "addresses_finding": true,
+      "issues": []
+    }
+  },
+  "approvals": [
+    {
+      "patch_id": "P-001-1-14c0c7",
+      "patch_hash": "14c0c79f5813941847f0501f03ee4ea731cab7bd4be8e48be0f88b212e408578",
+      "base_snapshot_hash": "ff45f3e510fd39ce1aef8308e55b3622ab2d2180a828019fe77b5c76e4f381c5",
+      "decision": "rejected",
+      "decided_at": "2026-10-19T20:51:55+00:00",
+      "note": ""
+    },
+    {
+      "patch_id": "P-004-1-9b7e02",
+      "patch_hash": "9b7e02a2c369863aeff5000fac1394f93dcafaf531d4a1864d73b6d60641798d",
+      "base_snapshot_hash": "ff45f3e510fd39ce1aef8308e55b3622ab2d2180a828019fe77b5c76e4f381c5",
+      "decision": "approved",
+      "decided_at": "2026-10-19T20:51:59+00:00",
+      "note": ""
+    },
+    {
+      "patch_id": "P-004-2-667f1e",
+      "patch_hash": "667f1e394e93f14a79c5f49c66c0a8f0e758f888b215e4546bed281885632f8b",
+      "base_snapshot_hash": "ff45f3e510fd39ce1aef8308e55b3622ab2d2180a828019fe77b5c76e4f381c5",
+      "decision": "approved",
+      "decided_at": "2026-10-19T20:52:01+00:00",
+      "note": ""
+    }
+  ],
+  "validations": [
+    {
+      "patch_id": "P-004-1-9b7e02",
+      "status": "Failed",
+      "checks": [
+        {
+          "name": "Syntax check",
+          "status": "Passed",
+          "detail": "1 file(s) compile (no code executed)",
+          "duration_s": 0.0006689000292681158
+        },
+        {
+          "name": "Finding re-check",
+          "status": "Passed",
+          "detail": "rule R001 matches in `average`: before 1, after 0",
+          "duration_s": 0.0
+        },
+        {
+          "name": "Tests",
+          "status": "Failed",
+          "detail": "8 passed, 1 failed, 0 errors, 0 skipped; still failing, linked to this finding: tests.test_stats::test_average_empty_raises",
+          "duration_s": 1.1908867999445647
+        },
+        {
+          "name": "Original unchanged",
+          "status": "Passed",
+          "detail": "re-hashed original matches the ingest hash",
+          "duration_s": 0.0
+        }
+      ],
+      "tests_passed": 8,
+      "tests_failed": 1,
+      "tests_errors": 0,
+      "tests_skipped": 0,
+      "test_cases": [
+        {
+          "name": "tests.test_stats::test_average_normal",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_stats::test_average_single_value",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_stats::test_average_empty_raises",
+          "outcome": "failed",
+          "message": "Failed: DID NOT RAISE ValueError\ndef test_average_empty_raises():\n        # Required behaviour: an empty class has no average; callers must be told.\n>       with pytest.raises(ValueError):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE ValueError\n\ntests\\test_stats.py:16: Failed"
+        },
+        {
+          "name": "tests.test_stats::test_letter_grade_boundaries",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_stats::test_add_score_returns_history",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_stats::test_percentage_zero_whole",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_storage::test_load_scores_valid_file",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_storage::test_load_scores_missing_file_returns_empty",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_storage::test_find_student",
+          "outcome": "passed",
+          "message": ""
+        }
+      ],
+      "raw_output_tail": "..F......                                                                [100%]\n================================== FAILURES ===================================\n__________________________ test_average_empty_raises __________________________\n\n    def test_average_empty_raises():\n        # Required behaviour: an empty class has no average; callers must be told.\n>       with pytest.raises(ValueError):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE ValueError\n\ntests\\test_stats.py:16: Failed\n=========================== short test summary info ===========================\nFAILED tests/test_stats.py::test_average_empty_raises - Failed: DID NOT RAISE...\n1 failed, 8 passed in 0.38s",
+      "isolation_level": "separate process, 60s timeout, stripped environment, isolated mode (-I)",
+      "limitations": [
+        "Not a security sandbox: the filesystem outside the working copy is not hidden.",
+        "Resource limits unavailable on this OS: only the timeout is enforced.",
+        "Network access is not blocked on this machine.",
+        "Passing tests and static checks do not prove the code is bug-free."
+      ],
+      "original_unchanged": true,
+      "working_copy": "C:\\Users\\Harsh\\Projects\\codemind-ai\\workspace\\ebe6ab30d74e\\working_copy_P-004-1-9b7e02",
+      "finished_at": "2026-10-19T20:51:59+00:00"
+    },
+    {
+      "patch_id": "P-004-2-667f1e",
+      "status": "Passed",
+      "checks": [
+        {
+          "name": "Syntax check",
+          "status": "Passed",
+          "detail": "1 file(s) compile (no code executed)",
+          "duration_s": 0.0005048000020906329
+        },
+        {
+          "name": "Finding re-check",
+          "status": "Passed",
+          "detail": "rule R001 matches in `average`: before 1, after 0",
+          "duration_s": 0.0
+        },
+        {
+          "name": "Tests",
+          "status": "Passed",
+          "detail": "9 passed, 0 failed, 0 errors, 0 skipped; now passing (were failing because of this finding): tests.test_stats::test_average_empty_raises",
+          "duration_s": 1.0495160999707878
+        },
+        {
+          "name": "Original unchanged",
+          "status": "Passed",
+          "detail": "re-hashed original matches the ingest hash",
+          "duration_s": 0.0
+        }
+      ],
+      "tests_passed": 9,
+      "tests_failed": 0,
+      "tests_errors": 0,
+      "tests_skipped": 0,
+      "test_cases": [
+        {
+          "name": "tests.test_stats::test_average_normal",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_stats::test_average_single_value",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_stats::test_average_empty_raises",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_stats::test_letter_grade_boundaries",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_stats::test_add_score_returns_history",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_stats::test_percentage_zero_whole",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_storage::test_load_scores_valid_file",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_storage::test_load_scores_missing_file_returns_empty",
+          "outcome": "passed",
+          "message": ""
+        },
+        {
+          "name": "tests.test_storage::test_find_student",
+          "outcome": "passed",
+          "message": ""
+        }
+      ],
+      "raw_output_tail": ".........                                                                [100%]\n9 passed in 0.25s",
+      "isolation_level": "separate process, 60s timeout, stripped environment, isolated mode (-I)",
+      "limitations": [
+        "Not a security sandbox: the filesystem outside the working copy is not hidden.",
+        "Resource limits unavailable on this OS: only the timeout is enforced.",
+        "Network access is not blocked on this machine.",
+        "Passing tests and static checks do not prove the code is bug-free."
+      ],
+      "original_unchanged": true,
+      "working_copy": "C:\\Users\\Harsh\\Projects\\codemind-ai\\workspace\\ebe6ab30d74e\\working_copy_P-004-2-667f1e",
+      "finished_at": "2026-10-19T20:52:01+00:00"
+    }
+  ],
+  "baseline": {
+    "patch_id": "baseline",
+    "status": "Failed",
+    "checks": [],
+    "tests_passed": 8,
+    "tests_failed": 1,
+    "tests_errors": 0,
+    "tests_skipped": 0,
+    "test_cases": [
+      {
+        "name": "tests.test_stats::test_average_normal",
+        "outcome": "passed",
+        "message": ""
+      },
+      {
+        "name": "tests.test_stats::test_average_single_value",
+        "outcome": "passed",
+        "message": ""
+      },
+      {
+        "name": "tests.test_stats::test_average_empty_raises",
+        "outcome": "failed",
+        "message": "ZeroDivisionError: division by zero\ndef test_average_empty_raises():\n        # Required behaviour: an empty class has no average; callers must be told.\n        with pytest.raises(ValueError):\n>           average([])\n\ntests\\test_stats.py:17: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nscores = []\n\n    def average(scores):\n        \"\"\"Return the mean of a list of scores.\"\"\"\n        total = sum(scores)\n>       return total / len(scores)\n               ^^^^^^^^^^^^^^^^^^^\nE       ZeroDivisionError: division by zero\n\ngrades\\stats.py:7: ZeroDivisionError"
+      },
+      {
+        "name": "tests.test_stats::test_letter_grade_boundaries",
+        "outcome": "passed",
+        "message": ""
+      },
+      {
+        "name": "tests.test_stats::test_add_score_returns_history",
+        "outcome": "passed",
+        "message": ""
+      },
+      {
+        "name": "tests.test_stats::test_percentage_zero_whole",
+        "outcome": "passed",
+        "message": ""
+      },
+      {
+        "name": "tests.test_storage::test_load_scores_valid_file",
+        "outcome": "passed",
+        "message": ""
+      },
+      {
+        "name": "tests.test_storage::test_load_scores_missing_file_returns_empty",
+        "outcome": "passed",
+        "message": ""
+      },
+      {
+        "name": "tests.test_storage::test_find_student",
+        "outcome": "passed",
+        "message": ""
+      }
+    ],
+    "raw_output_tail": "..F......                                                                [100%]\n================================== FAILURES ===================================\n__________________________ test_average_empty_raises __________________________\n\n    def test_average_empty_raises():\n        # Required behaviour: an empty class has no average; callers must be told.\n        with pytest.raises(ValueError):\n>           average([])\n\ntests\\test_stats.py:17: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nscores = []\n\n    def average(scores):\n        \"\"\"Return the mean of a list of scores.\"\"\"\n        total = sum(scores)\n>       return total / len(scores)\n               ^^^^^^^^^^^^^^^^^^^\nE       ZeroDivisionError: division by zero\n\ngrades\\stats.py:7: ZeroDivisionError\n=========================== short test summary info ===========================\nFAILED tests/test_stats.py::test_average_empty_raises - ZeroDivisionError: di...\n1 failed, 8 passed in 0.37s",
+    "isolation_level": "separate process, 60s timeout, stripped environment, isolated mode (-I)",
+    "limitations": [
+      "Not a security sandbox: the filesystem outside the working copy is not hidden.",
+      "Resource limits unavailable on this OS: only the timeout is enforced.",
+      "Network access is not blocked on this machine."
+    ],
+    "original_unchanged": null,
+    "working_copy": "C:\\Users\\Harsh\\Projects\\codemind-ai\\workspace\\ebe6ab30d74e\\working_copy_baseline",
+    "finished_at": "2026-10-19T20:51:44+00:00"
+  },
+  "log": [
+    {
+      "agent": "Planner / Orchestrator",
+      "started_at": "2026-10-19T20:51:42+00:00",
+      "finished_at": "2026-10-19T20:51:42+00:00",
+      "state_before": "PLANNED",
+      "state_after": "PLANNED",
+      "summary": "Plan created with 9 active steps",
+      "outputs": [],
+      "error": ""
+    },
+    {
+      "agent": "Repository Understanding Agent",
+      "started_at": "2026-10-19T20:51:43+00:00",
+      "finished_at": "2026-10-19T20:51:43+00:00",
+      "state_before": "ANALYZING",
+      "state_after": "ANALYZING",
+      "summary": "Indexed 11 files (8 Python), 1 entry point(s), 4 technologies, 3 documentation gaps.",
+      "outputs": [
+        "technologies: JSON, Python, SQLite, pytest",
+        "entry points: main.py"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Bug & Risk Analysis Agent",
+      "started_at": "2026-10-19T20:51:43+00:00",
+      "finished_at": "2026-10-19T20:51:43+00:00",
+      "state_before": "ANALYZING",
+      "state_after": "ANALYZING",
+      "summary": "9 findings across 8 Python files (rules R000-R009, PF01).",
+      "outputs": [
+        "Critical: 1",
+        "High: 4",
+        "Medium: 3",
+        "Low: 1",
+        "pyflakes: used"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Critic & Validation Agent",
+      "started_at": "2026-10-19T20:51:43+00:00",
+      "finished_at": "2026-10-19T20:51:44+00:00",
+      "state_before": "ANALYZING",
+      "state_after": "ANALYZING",
+      "summary": "Baseline on original: 8 passed, 1 failed, 0 errors (1.2s); 1 finding(s) confirmed by execution.",
+      "outputs": [
+        "F-004 confirmed by tests.test_stats::test_average_empty_raises"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Solution & Architecture Advisor",
+      "started_at": "2026-10-19T20:51:44+00:00",
+      "finished_at": "2026-10-19T20:51:44+00:00",
+      "state_before": "ANALYZING",
+      "state_after": "ANALYZING",
+      "summary": "9 comparisons written; 1 recommend keeping the current approach.",
+      "outputs": [
+        "text source: Mock LLM (deterministic knowledge-base text, no model used)"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Planner / Orchestrator",
+      "started_at": "2026-10-19T20:51:44+00:00",
+      "finished_at": "2026-10-19T20:51:44+00:00",
+      "state_before": "ANALYZING",
+      "state_after": "ANALYZING",
+      "summary": "9 findings; suggested first: F-001 (Critical, Likely) Use of eval/exec in `read_scores()`",
+      "outputs": [],
+      "error": ""
+    },
+    {
+      "agent": "Code Improvement Agent",
+      "started_at": "2026-10-19T20:51:54+00:00",
+      "finished_at": "2026-10-19T20:51:54+00:00",
+      "state_before": "PATCH_PROPOSED",
+      "state_after": "PATCH_PROPOSED",
+      "summary": "Proposed 'Use ast.literal_eval' for F-001.",
+      "outputs": [
+        "patch P-001-1-14c0c7",
+        "18 diff lines"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Critic & Validation Agent",
+      "started_at": "2026-10-19T20:51:54+00:00",
+      "finished_at": "2026-10-19T20:51:54+00:00",
+      "state_before": "PATCH_PROPOSED",
+      "state_after": "PATCH_PROPOSED",
+      "summary": "Reviewed P-001-1-14c0c7: accepted for human review.",
+      "outputs": [
+        "scope ok",
+        "finding removed by rule re-check"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Code Improvement Agent",
+      "started_at": "2026-10-19T20:51:58+00:00",
+      "finished_at": "2026-10-19T20:51:58+00:00",
+      "state_before": "PATCH_PROPOSED",
+      "state_after": "PATCH_PROPOSED",
+      "summary": "Proposed 'Return a safe default' for F-004.",
+      "outputs": [
+        "patch P-004-1-9b7e02",
+        "11 diff lines"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Critic & Validation Agent",
+      "started_at": "2026-10-19T20:51:58+00:00",
+      "finished_at": "2026-10-19T20:51:58+00:00",
+      "state_before": "PATCH_PROPOSED",
+      "state_after": "PATCH_PROPOSED",
+      "summary": "Reviewed P-004-1-9b7e02: accepted for human review.",
+      "outputs": [
+        "scope ok",
+        "finding removed by rule re-check"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Planner / Orchestrator",
+      "started_at": "2026-10-19T20:51:59+00:00",
+      "finished_at": "2026-10-19T20:51:59+00:00",
+      "state_before": "PATCH_APPLIED_TO_COPY",
+      "state_after": "PATCH_APPLIED_TO_COPY",
+      "summary": "Applied P-004-1-9b7e02 to working copy only",
+      "outputs": [
+        "C:\\Users\\Harsh\\Projects\\codemind-ai\\workspace\\ebe6ab30d74e\\working_copy_P-004-1-9b7e02"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Critic & Validation Agent",
+      "started_at": "2026-10-19T20:51:59+00:00",
+      "finished_at": "2026-10-19T20:52:01+00:00",
+      "state_before": "VALIDATING",
+      "state_after": "VALIDATING",
+      "summary": "Validated P-004-1-9b7e02: Failed (tests: 8 passed, 1 failed, 0 errors).",
+      "outputs": [
+        "Syntax check: Passed - 1 file(s) compile (no code executed)",
+        "Finding re-check: Passed - rule R001 matches in `average`: before 1, after 0",
+        "Tests: Failed - 8 passed, 1 failed, 0 errors, 0 skipped; still failing, linked to this finding: tests.test_stats::test_average_empty_raises",
+        "Original unchanged: Passed - re-hashed original matches the ingest hash"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Code Improvement Agent",
+      "started_at": "2026-10-19T20:52:01+00:00",
+      "finished_at": "2026-10-19T20:52:01+00:00",
+      "state_before": "PATCH_PROPOSED",
+      "state_after": "PATCH_PROPOSED",
+      "summary": "Proposed 'Raise ValueError' for F-004 (chosen after validation feedback on attempt 1).",
+      "outputs": [
+        "patch P-004-2-667f1e",
+        "11 diff lines"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Critic & Validation Agent",
+      "started_at": "2026-10-19T20:52:01+00:00",
+      "finished_at": "2026-10-19T20:52:01+00:00",
+      "state_before": "PATCH_PROPOSED",
+      "state_after": "PATCH_PROPOSED",
+      "summary": "Reviewed P-004-2-667f1e: accepted for human review.",
+      "outputs": [
+        "scope ok",
+        "finding removed by rule re-check"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Planner / Orchestrator",
+      "started_at": "2026-10-19T20:52:01+00:00",
+      "finished_at": "2026-10-19T20:52:01+00:00",
+      "state_before": "PATCH_APPLIED_TO_COPY",
+      "state_after": "PATCH_APPLIED_TO_COPY",
+      "summary": "Applied P-004-2-667f1e to working copy only",
+      "outputs": [
+        "C:\\Users\\Harsh\\Projects\\codemind-ai\\workspace\\ebe6ab30d74e\\working_copy_P-004-2-667f1e"
+      ],
+      "error": ""
+    },
+    {
+      "agent": "Critic & Validation Agent",
+      "started_at": "2026-10-19T20:52:01+00:00",
+      "finished_at": "2026-10-19T20:52:02+00:00",
+      "state_before": "VALIDATING",
+      "state_after": "VALIDATING",
+      "summary": "Validated P-004-2-667f1e: Passed (tests: 9 passed, 0 failed, 0 errors).",
+      "outputs": [
+        "Syntax check: Passed - 1 file(s) compile (no code executed)",
+        "Finding re-check: Passed - rule R001 matches in `average`: before 1, after 0",
+        "Tests: Passed - 9 passed, 0 failed, 0 errors, 0 skipped; now passing (were failing because of this finding): tests.test_stats::test_average_empty_raises",
+        "Original unchanged: Passed - re-hashed original matches the ingest hash"
+      ],
+      "error": ""
+    }
+  ],
+  "decisions": [
+    {
+      "from_state": "RECEIVED",
+      "to_state": "PLANNED",
+      "event": "plan_created",
+      "reason": "11 files accepted; plan: understand, analyze, baseline, advise, prioritize, propose, review, approve, validate",
+      "at": "2026-10-19T20:51:42+00:00"
+    },
+    {
+      "from_state": "PLANNED",
+      "to_state": "ANALYZING",
+      "event": "analysis_started",
+      "reason": "plan executed in order: understanding first",
+      "at": "2026-10-19T20:51:43+00:00"
+    },
+    {
+      "from_state": "ANALYZING",
+      "to_state": "FINDINGS_READY",
+      "event": "analysis_complete",
+      "reason": "9 findings; suggested first: F-001 (Critical, Likely) Use of eval/exec in `read_scores()`",
+      "at": "2026-10-19T20:51:44+00:00"
+    },
+    {
+      "from_state": "FINDINGS_READY",
+      "to_state": "PATCH_PROPOSED",
+      "event": "finding_selected",
+      "reason": "developer selected F-001",
+      "at": "2026-10-19T20:51:54+00:00"
+    },
+    {
+      "from_state": "PATCH_PROPOSED",
+      "to_state": "AWAITING_APPROVAL",
+      "event": "critic_approved",
+      "reason": "P-001-1-14c0c7 passed critic review",
+      "at": "2026-10-19T20:51:54+00:00"
+    },
+    {
+      "from_state": "AWAITING_APPROVAL",
+      "to_state": "FINDINGS_READY",
+      "event": "human_rejected",
+      "reason": "developer rejected P-001-1-14c0c7; original untouched, no copy made",
+      "at": "2026-10-19T20:51:55+00:00"
+    },
+    {
+      "from_state": "FINDINGS_READY",
+      "to_state": "PATCH_PROPOSED",
+      "event": "finding_selected",
+      "reason": "developer selected F-004",
+      "at": "2026-10-19T20:51:58+00:00"
+    },
+    {
+      "from_state": "PATCH_PROPOSED",
+      "to_state": "AWAITING_APPROVAL",
+      "event": "critic_approved",
+      "reason": "P-004-1-9b7e02 passed critic review",
+      "at": "2026-10-19T20:51:58+00:00"
+    },
+    {
+      "from_state": "AWAITING_APPROVAL",
+      "to_state": "PATCH_APPLIED_TO_COPY",
+      "event": "human_approved",
+      "reason": "developer approved P-004-1-9b7e02 (hash 9b7e02a2c369)",
+      "at": "2026-10-19T20:51:59+00:00"
+    },
+    {
+      "from_state": "PATCH_APPLIED_TO_COPY",
+      "to_state": "VALIDATING",
+      "event": "validation_started",
+      "reason": "patch applied to isolated working copy",
+      "at": "2026-10-19T20:51:59+00:00"
+    },
+    {
+      "from_state": "VALIDATING",
+      "to_state": "VALIDATION_FAILED",
+      "event": "validation_failed",
+      "reason": "Tests: 8 passed, 1 failed, 0 errors, 0 skipped; still failing, linked to this finding: tests.test_stats::test_average_empty_raises",
+      "at": "2026-10-19T20:52:01+00:00"
+    },
+    {
+      "from_state": "VALIDATION_FAILED",
+      "to_state": "PATCH_PROPOSED",
+      "event": "retry_proposed",
+      "reason": "retry 1/2: asking for a different strategy",
+      "at": "2026-10-19T20:52:01+00:00"
+    },
+    {
+      "from_state": "PATCH_PROPOSED",
+      "to_state": "AWAITING_APPROVAL",
+      "event": "critic_approved",
+      "reason": "P-004-2-667f1e passed critic review",
+      "at": "2026-10-19T20:52:01+00:00"
+    },
+    {
+      "from_state": "AWAITING_APPROVAL",
+      "to_state": "PATCH_APPLIED_TO_COPY",
+      "event": "human_approved",
+      "reason": "developer approved P-004-2-667f1e (hash 667f1e394e93)",
+      "at": "2026-10-19T20:52:01+00:00"
+    },
+    {
+      "from_state": "PATCH_APPLIED_TO_COPY",
+      "to_state": "VALIDATING",
+      "event": "validation_started",
+      "reason": "patch applied to isolated working copy",
+      "at": "2026-10-19T20:52:01+00:00"
+    },
+    {
+      "from_state": "VALIDATING",
+      "to_state": "VALIDATED",
+      "event": "validation_passed",
+      "reason": "all checks passed",
+      "at": "2026-10-19T20:52:02+00:00"
+    }
+  ],
+  "selected_finding_id": "F-004",
+  "retries": 1,
+  "blocked_reason": "",
+  "analysis_status": "Passed",
+  "llm_label": "Mock LLM (deterministic knowledge-base text, no model used)",
+  "original_unchanged_at_report_time": true,
+  "generated_at": "2026-10-19T20:52:03+00:00",
+  "notes": [
+    "Findings come from deterministic AST rules; 'Potential' findings need human review.",
+    "Validation results are recorded outputs of real checks; nothing in this report is simulated.",
+    "Explanation text source: Mock LLM (deterministic knowledge-base text, no model used)."
+  ]
+}

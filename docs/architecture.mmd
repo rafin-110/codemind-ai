@@ -1,0 +1,74 @@
+flowchart TB
+    DEV([Developer]):::human --> UI[Streamlit UI<br/>7 views]
+
+    subgraph INGEST[Repository ingestion - no code is executed]
+        ZIP[ZIP upload<br/>primary input] --> SAFE{Safe extraction checks<br/>path traversal, symlinks,<br/>size, file count, ratio}
+        GH[Public GitHub URL<br/>future scope]:::optional -.-> SAFE
+        SAFE -- rejected --> ERR[Show error,<br/>stop run]
+        SAFE -- ok --> ORIG[(Original snapshot<br/>read-only, hashed)]
+    end
+    UI --> ZIP
+    UI -.-> GH
+
+    subgraph CORE[Planner / Orchestrator - explicit state machine]
+        PLAN[Planner<br/>builds task plan from<br/>repo profile + user goal]
+        STATE[(Shared WorkflowContext<br/>findings, recommendations,<br/>patches, approvals, results,<br/>agent execution log<br/>read + written by every agent)]
+    end
+    ORIG --> PLAN
+    PLAN --> A1
+
+    A1[Agent 1<br/>Repository Understanding] --> D1{Python sources<br/>found?}
+    D1 -- no --> LIMITED[Docs/structure-only report<br/>analysis marked Not run]
+    D1 -- yes --> A2[Agent 2<br/>Bug and Risk Analysis]
+    A2 --> D2{Findings?}
+    D2 -- none --> CLEAN[Report: no rule matches<br/>not a proof of correctness]
+    D2 -- yes --> BASE[Agent 5 baseline<br/>repo tests on untouched copy<br/>failing test at finding line = Confirmed]
+    BASE --> PRIO[Prioritise by severity<br/>and confidence]
+    PRIO --> A3[Agent 3<br/>Solution and Architecture Advisor]
+    A3 --> FR[FINDINGS_READY<br/>shown with evidence]
+    FR --> SEL[Developer selects a finding]
+    SEL --> A4[Agent 4<br/>Code Improvement<br/>proposes patch + diff]
+    A4 --> A5R[Agent 5 review<br/>scope, paths, addresses issue?]
+    A5R -- out of scope --> A4
+    A5R -- ok --> APPR{Human approval<br/>bound to patch hash +<br/>source hash}
+    APPR -- reject --> REJ[Proposal rejected<br/>original unchanged,<br/>logged]
+    REJ --> FR
+    APPR -- stale or invalid --> A4
+    APPR -- approve --> COPY[(Isolated working copy<br/>patch applied here only)]
+    ORIG -. copied, never written .-> COPY
+    COPY --> VAL[Agent 5 validation]
+
+    subgraph TOOLS[Static analysis and test tools]
+        T1[ast rules engine]
+        T2[compile syntax check<br/>no execution]
+        T3[pytest in subprocess<br/>timeout, stripped env,<br/>resource limits]
+        T4[difflib unified diff]
+        T5[optional pyflakes]
+    end
+    A2 --> T1
+    A2 -.-> T5
+    A4 --> T4
+    VAL --> T2
+    VAL --> T3
+    BASE --> T3
+
+    VAL --> D3{Validation result}
+    D3 -- passed --> OK[VALIDATED]
+    D3 -- failed and retries left --> A4
+    D3 -- failed, retries used up --> BLK[BLOCKED<br/>escalate to developer]
+    D3 -- tests not allowed or none --> PART[PARTIALLY_VERIFIED<br/>static checks only]
+
+    OK --> REP[Final validation report<br/>JSON + Markdown download]
+    BLK --> REP
+    PART --> REP
+    LIMITED --> REP
+    CLEAN --> REP
+    REP --> UI
+
+    PLAN <-.-> STATE
+
+    LLM[Optional local LLM via Ollama<br/>wording only, labelled,<br/>cannot approve or skip checks]:::optional -.-> A3
+    LLM -.-> A4
+
+    classDef human fill:#ffe9b3,stroke:#b8860b
+    classDef optional fill:#eeeeee,stroke:#888,stroke-dasharray: 4 3

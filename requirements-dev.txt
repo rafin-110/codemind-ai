@@ -1,0 +1,5 @@
+# Dev / evidence-only extras (NOT needed to run the app or the test suite)
+-r requirements.txt
+pyflakes>=3.2           # enables rule PF01 and its test
+playwright>=1.44        # scripts/capture_demo.py (uses installed Chrome/Edge; else: python -m playwright install chromium)
+python-pptx>=1.0        # presentation/build_deck.py

@@ -1,0 +1,68 @@
+{
+  "repo": "student_grades_app",
+  "note": "Ground truth for planted issues. Line numbers located by text search, independent of the rule engine.",
+  "expected": [
+    {
+      "rule_id": "R001",
+      "file": "grades/stats.py",
+      "line": 7,
+      "located_by": "return total / len(scores)"
+    },
+    {
+      "rule_id": "R009",
+      "file": "grades/stats.py",
+      "line": 12,
+      "located_by": "if score == None:"
+    },
+    {
+      "rule_id": "R004",
+      "file": "grades/stats.py",
+      "line": 23,
+      "located_by": "def add_score(score, history=[]):"
+    },
+    {
+      "rule_id": "R006",
+      "file": "grades/storage.py",
+      "line": 6,
+      "located_by": "API_KEY = \"sk-demo"
+    },
+    {
+      "rule_id": "R002",
+      "file": "grades/storage.py",
+      "line": 14,
+      "located_by": "except:"
+    },
+    {
+      "rule_id": "R007",
+      "file": "grades/storage.py",
+      "line": 34,
+      "located_by": "cursor.execute(f\"SELECT"
+    },
+    {
+      "rule_id": "R003",
+      "file": "grades/cli.py",
+      "line": 11,
+      "located_by": "return eval(raw)"
+    },
+    {
+      "rule_id": "R008",
+      "file": "grades/cli.py",
+      "line": 16,
+      "located_by": "return int(input("
+    },
+    {
+      "rule_id": "R005",
+      "file": "grades/cli.py",
+      "line": 21,
+      "located_by": "shell=True"
+    }
+  ],
+  "must_not_flag": [
+    {
+      "rule_id": "R001",
+      "file": "grades/stats.py",
+      "function": "percentage",
+      "why": "division guarded by 'if whole == 0'"
+    }
+  ]
+}

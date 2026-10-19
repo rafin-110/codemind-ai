@@ -1,0 +1,10 @@
+# CodeMind AI - runtime dependencies (Python 3.11+; also checked on 3.13)
+# Everything else (ast, zipfile, pathlib, difflib, subprocess, hashlib,
+# dataclasses, json, tempfile, urllib) comes from the standard library.
+
+streamlit>=1.50,<2      # UI for the PoC (tested with 1.66)
+pytest>=8,<10           # runs the sample repo's tests inside the validation sandbox, and our own test suite
+
+# Optional (NOT required, auto-detected at runtime if installed):
+# pyflakes>=3.2        # extra undefined-name check (rule PF01) for the Bug & Risk agent
+# Ollama (local, free) is reached over HTTP with urllib, so it needs no Python package.
