@@ -45,10 +45,7 @@ def render(orch) -> None:
                          horizontal=True, height=180, sort=False)
         else:
             st.write("No rule matched. That is not proof the code is correct.")
-        if ctx.baseline:
-            b = ctx.baseline
-            st.caption(f"Baseline tests on the original: {b.tests_passed} passed, {b.tests_failed} failed, "
-                       f"{b.tests_errors} errors.")
+    ui.baseline_panel(ctx)
     if ctx.findings:
         top = ctx.findings[0]
         st.info(f"Suggested next action: review **{top.id}** ({top.severity.value}, {top.confidence.value}) "

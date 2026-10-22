@@ -35,13 +35,18 @@ class _Entry:
 def _validate_name(name: str) -> str:
     if "\x00" in name:
         raise UnsafeArchiveError(f"entry name contains a NUL byte: {name!r}")
-    if "\\" in name:
-        raise UnsafeArchiveError(f"entry '{name}' uses backslashes (possible path trick)")
+    # Windows tools (e.g. PowerShell 5.1 Compress-Archive) write backslash separators, and Python's
+    # zipfile only converts them when it runs on Windows. Treat them as separators on every OS, then
+    # apply exactly the same traversal / absolute-path checks.
+    original = name
+    name = name.replace("\\", "/")
     if name.startswith("/") or _DRIVE.match(name):
-        raise UnsafeArchiveError(f"entry '{name}' is an absolute path")
+        raise UnsafeArchiveError(f"entry '{original}' is an absolute path")
     parts = PurePosixPath(name).parts
     if any(p == ".." for p in parts):
-        raise UnsafeArchiveError(f"entry '{name}' escapes the workspace (path traversal)")
+        raise UnsafeArchiveError(f"entry '{original}' escapes the workspace (path traversal)")
+    if any(":" in p for p in parts):   # NTFS alternate data streams / drive-relative names
+        raise UnsafeArchiveError(f"entry '{original}' contains ':' (not allowed in a portable path)")
     return "/".join(p for p in parts if p not in ("", "."))
 
 
@@ -72,7 +77,7 @@ def inspect_zip(data: bytes) -> list[_Entry]:
             raise UnsafeArchiveError(f"entry '{info.filename}' is a symbolic link")
         if info.flag_bits & 0x1:
             raise UnsafeArchiveError(f"entry '{info.filename}' is encrypted")
-        if info.is_dir() or not rel:
+        if info.is_dir() or info.filename.replace("\\", "/").endswith("/") or not rel:
             continue
         total += info.file_size
         if total > config.MAX_UNCOMPRESSED_BYTES:

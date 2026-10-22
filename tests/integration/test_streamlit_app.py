@@ -81,3 +81,17 @@ def test_core_package_does_not_import_streamlit():
             names = [a.name for a in node.names] if isinstance(node, ast.Import) else \
                 [node.module or ""] if isinstance(node, ast.ImportFrom) else []
             assert not any(n.split(".")[0] == "streamlit" for n in names), path
+
+
+def test_failed_baseline_reason_is_visible_in_ui(app):
+    """A baseline that produced no results must be explained, never shown as a bare '0 passed'."""
+    from tests.helpers import make_zip
+    orch = app.session_state["orch"]
+    orch.load_zip(make_zip({"app.py": "def f():\n    return 1\n",
+                            "tests/test_app.py": "from app import f\n\n\ndef test_f():\n    assert f() == 1\n",
+                            "conftest.py": "raise RuntimeError('broken env')\n"}), "crash.zip", trusted=True)
+    orch.analyze()
+    for page in ("1. Overview", "7. Validation Results"):
+        goto(app, page)
+        assert any("produced no results" in w.value for w in app.warning), page
+    assert orch.ctx.baseline.status.value == "Not run"

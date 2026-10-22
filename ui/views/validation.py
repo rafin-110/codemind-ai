@@ -12,6 +12,12 @@ def render(orch) -> None:
     v = ctx.latest_validation
     if v is None:
         st.info("No patch has been validated yet.")
+        if ctx.current_proposal is not None and ctx.state.value == "AWAITING_APPROVAL":
+            st.caption("A proposal is waiting for your decision on **Proposed Changes**. Approve it there "
+                       "to apply it to a working copy and run the checks.")
+        elif ctx.findings:
+            st.caption("Pick a finding on **Findings & Explainability**, request a fix, then approve the "
+                       "proposed patch on **Proposed Changes**. Validation runs only after you approve.")
     else:
         p = next(x for x in ctx.proposals if x.patch_id == v.patch_id)
         ui.html("Status " + ui.status_pill(v.status))
@@ -41,11 +47,8 @@ def render(orch) -> None:
             for x in ctx.validations:
                 st.write(f"- {x.patch_id}: {x.status.value} ({x.tests_passed} passed, {x.tests_failed} failed)")
 
-    if ctx.baseline:
-        b = ctx.baseline
-        st.subheader("Baseline: tests on the untouched original")
-        st.write(f"{b.tests_passed} passed, {b.tests_failed} failed, {b.tests_errors} errors, {b.tests_skipped} skipped. "
-                 "Findings whose line appears in a failing test's traceback are marked Confirmed.")
+    st.subheader("Baseline: tests on the untouched original")
+    ui.baseline_panel(ctx)
 
     st.subheader("Download report")
     a, b = st.columns(2)

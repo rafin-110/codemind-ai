@@ -11,7 +11,8 @@ import ast
 from codemind.agents.base import Agent, AgentOutput
 from codemind.agents.repo_understanding import read_text
 from codemind.models import (
-    FileEdit, Finding, PatchProposal, ValidationResult, WorkflowContext, compute_patch_hash, sha256_bytes,
+    CriticReview, FileEdit, Finding, PatchProposal, ValidationResult, WorkflowContext, compute_patch_hash,
+    sha256_bytes,
 )
 from codemind.analysis.evidence import redact
 from codemind.patching.diff import unified_diff
@@ -49,7 +50,7 @@ class CodeImprovementAgent(Agent):
     role = "Proposes a minimal patch with a diff, risks and suggested tests."
 
     def run(self, ctx: WorkflowContext, *, finding_id: str, feedback: ValidationResult | None = None,
-            exclude: set[int] | None = None, **_) -> AgentOutput:
+            critique: CriticReview | None = None, exclude: set[int] | None = None, **_) -> AgentOutput:
         f = ctx.finding(finding_id)
         if f is None:
             raise ValueError(f"unknown finding {finding_id}")
@@ -59,7 +60,7 @@ class CodeImprovementAgent(Agent):
                                ["no_fix"])
         tried = set(exclude or ())
         tried |= {p.strategy_index for p in ctx.proposals if p.finding_id == f.id}
-        order = self.order_strategies(strategies, tried, feedback)
+        order = self.order_strategies(strategies, tried, feedback, critique)
         source = read_text(ctx.snapshot, f.file)
         reasons = []
         for idx in order:
@@ -70,27 +71,35 @@ class CodeImprovementAgent(Agent):
             except (NoFix, SyntaxError, ValueError) as exc:
                 reasons.append(f"{strat.name}: {exc}")
                 continue
-            proposal = self._proposal(ctx, f, idx, strat, source, new_source, feedback)
+            proposal = self._proposal(ctx, f, idx, strat, source, new_source, feedback, critique)
             ctx.proposals.append(proposal)
             why = ""
-            if feedback is not None:
+            if critique is not None:
+                why = f" (chosen after critic rejected {critique.patch_id})"
+            elif feedback is not None:
                 why = f" (chosen after validation feedback on attempt {proposal.attempt - 1})"
             return AgentOutput(f"Proposed '{strat.name}' for {f.id}{why}.",
-                               [f"patch {proposal.patch_id}", f"{len(proposal.unified_diff.splitlines())} diff lines"])
+                               [f"patch {proposal.patch_id}", f"{len(proposal.unified_diff.splitlines())} diff lines"]
+                               + proposal.context_used)
         return AgentOutput(f"No remaining fix strategy for {f.id}.", ["no_fix"] + reasons)
 
     @staticmethod
-    def order_strategies(strategies: list[Strategy], tried: set[int], feedback: ValidationResult | None) -> list[int]:
+    def order_strategies(strategies: list[Strategy], tried: set[int], feedback: ValidationResult | None,
+                         critique: CriticReview | None = None) -> list[int]:
         remaining = [i for i in range(len(strategies)) if i not in tried]
-        if feedback is None:
+        if feedback is None and critique is None:
             return remaining
-        text = (feedback.raw_output_tail + " " + " ".join(c.message for c in feedback.test_cases)).lower()
-        # strategies whose keywords appear in the failing test output go first
+        text = " ".join(critique.issues) if critique else ""
+        if feedback is not None:
+            text += " " + feedback.raw_output_tail + " " + " ".join(c.message for c in feedback.test_cases)
+        text = text.lower()
+        # strategies whose keywords appear in the failing test output / critic issues go first
         scored = sorted(remaining, key=lambda i: -sum(k in text for k in strategies[i].feedback_keywords))
         return scored
 
     @staticmethod
-    def _proposal(ctx, f: Finding, idx: int, strat: Strategy, before: str, after: str, feedback) -> PatchProposal:
+    def _proposal(ctx, f: Finding, idx: int, strat: Strategy, before: str, after: str, feedback,
+                  critique: CriticReview | None = None) -> PatchProposal:
         file_info = next(fi for fi in ctx.snapshot.included_files if fi.rel_path == f.file)
         edits = [FileEdit(f.file, file_info.sha256, after)]
         base = ctx.snapshot.snapshot_hash
@@ -109,7 +118,28 @@ class CodeImprovementAgent(Agent):
             affected_files=[f.file], regression_risks=RISKS.get(f.rule_id, []),
             suggested_tests=[t.format(symbol=symbol) for t in SUGGESTED_TESTS.get(f.rule_id, [])],
             base_snapshot_hash=base, patch_hash=patch_hash, attempt=attempt,
+            context_used=handoff_notes(ctx, f, feedback, critique),
         )
+
+
+def handoff_notes(ctx: WorkflowContext, f: Finding, feedback: ValidationResult | None,
+                  critique: CriticReview | None) -> list[str]:
+    """What this proposal was built from, taken from earlier agents' outputs on the shared context."""
+    notes = [f"finding evidence: {f.evidence.file}:{f.evidence.line_start}-{f.evidence.line_end}"]
+    if f.extra.get("confirmed_by"):
+        notes.append(f"baseline: confirmed by failing test(s) {', '.join(f.extra['confirmed_by'])}")
+    rec = ctx.recommendations.get(f.id)
+    if rec is not None:
+        notes.append(f"advisor recommended: {rec.recommended}")
+        if rec.keep_current:
+            notes.append("advisor: current approach is acceptable; this patch is optional")
+    if critique is not None:
+        notes.append(f"critic rejected {critique.patch_id}: {'; '.join(critique.issues) or 'no reason given'}")
+    if feedback is not None:
+        failed = [c.name for c in feedback.test_cases if c.outcome in ("failed", "error")]
+        notes.append(f"validation of {feedback.patch_id} was {feedback.status.value}"
+                     + (f": {', '.join(failed)}" if failed else ""))
+    return notes
 
 
 def source_hash_matches(ctx: WorkflowContext, proposal: PatchProposal) -> bool:

@@ -17,12 +17,13 @@ from codemind.agents.repo_understanding import RepositoryUnderstandingAgent
 from codemind.agents.solution_advisor import SolutionAdvisorAgent
 from codemind.ingestion.zip_loader import UnsafeArchiveError, ingest_zip, zip_directory
 from codemind.llm.adapter import LLMAdapter, get_default_llm
+from codemind.analysis.prioritizer import prioritize, renumber
 from codemind.models import (
-    AgentLogEntry, PatchProposal, ValidationResult, ValidationStatus as V, WorkflowContext,
-    WorkflowState as S, utc_now,
+    AgentLogEntry, AnalysisStatus as A, CriticReview, PatchProposal, ValidationResult,
+    ValidationStatus as V, WorkflowContext, WorkflowState as S, utc_now,
 )
 from codemind.orchestrator import states
-from codemind.orchestrator.planner import build_plan
+from codemind.orchestrator.planner import ANALYSIS_STEPS, PATCH_CYCLE_STEPS, build_plan
 from codemind.patching import approval as approval_mod
 from codemind.patching.apply import PatchScopeError, apply_to_copy
 from codemind.workspace import new_run_id, remove_tree
@@ -54,6 +55,11 @@ class Orchestrator:
     def _step(self, key: str, status: str) -> None:
         if self.ctx.plan and key in self.ctx.plan.step_status:
             self.ctx.plan.step_status[key] = status
+
+    def _deps_done(self, key: str) -> tuple[bool, str]:
+        step = next(s for s in self.ctx.plan.steps if s.key == key)
+        missing = [d for d in step.depends_on if self.ctx.plan.step_status.get(d) != "done"]
+        return not missing, ", ".join(f"{d} is {self.ctx.plan.step_status.get(d, 'missing')}" for d in missing)
 
     def _fail_safe(self, exc: Exception) -> None:
         reason = f"{type(exc).__name__}: {exc}"
@@ -89,40 +95,77 @@ class Orchestrator:
 
     # ------------------------------------------------------------- analysis
     def analyze(self) -> WorkflowContext:
+        """Run the analysis steps of the plan in order, honouring skipped steps and dependencies."""
         ctx = self.ctx
         if ctx.state is not S.PLANNED:
             raise WorkflowError(f"analysis needs a freshly loaded repository (state is {ctx.state.value})")
+        current = ""
         try:
-            states.transition(ctx, "analysis_started", "plan executed in order: understanding first")
-            self.repo_agent.execute(ctx)
-            self._step("understand", "done")
-            if not ctx.snapshot.python_files:
-                for key in ("analyze", "baseline", "advise", "prioritize", "propose", "review", "approve", "validate"):
+            states.transition(ctx, "analysis_started", "plan executed in order: " + ", ".join(
+                k for k in ANALYSIS_STEPS if ctx.plan.step_status.get(k) == "pending"))
+            for key in ANALYSIS_STEPS:
+                if ctx.plan.step_status.get(key) != "pending":
+                    continue                                   # disabled by the planner, reason is on the plan
+                ok, why = self._deps_done(key)
+                if not ok:
                     self._step(key, "skipped")
-                ctx.analysis_status = V.NOT_RUN
-                states.transition(ctx, "analysis_complete", "no Python sources: structure-only report")
-                return ctx
-            self.bug_agent.execute(ctx)
-            self._step("analyze", "done")
-            if ctx.plan.step_status.get("baseline") == "pending":
-                self.critic.execute(ctx, mode="baseline")
-                self._step("baseline", "done")
-            self.advisor.execute(ctx)
-            self._step("advise", "done")
-            self._step("prioritize", "done")
-            ctx.analysis_status = V.PASSED
-            top = ctx.findings[0] if ctx.findings else None
-            decision = (f"{len(ctx.findings)} findings; suggested first: {top.id} ({top.severity.value}, "
-                        f"{top.confidence.value}) {top.title}" if top else "no rule matched; this is not proof of correctness")
-            self._note(decision)
+                    self._note(f"Skipped '{key}': dependency not satisfied ({why})")
+                    continue
+                current = key
+                self._step(key, self._run_analysis_step(key))
+            current = ""
+            ran_rules = ctx.plan.step_status.get("analyze") == "done"
+            ctx.analysis_status = A.COMPLETED if ran_rules else A.STRUCTURE_ONLY
+            if not ran_rules:
+                for key in PATCH_CYCLE_STEPS:
+                    self._step(key, "skipped")
+                decision = "no Python sources: structure-only report"
+            else:
+                top = ctx.findings[0] if ctx.findings else None
+                decision = (f"{len(ctx.findings)} findings; suggested first: {top.id} ({top.severity.value}, "
+                            f"{top.confidence.value}) {top.title}" if top
+                            else "no rule matched; this is not proof of correctness")
+                self._note(decision)
             states.transition(ctx, "analysis_complete", decision)
         except Exception as exc:  # fail safe, never pretend success
+            if current:
+                self._step(current, "failed")
+            ctx.analysis_status = A.FAILED
             self._fail_safe(exc)
         return ctx
+
+    def _run_analysis_step(self, key: str) -> str:
+        """Run one analysis step; returns the plan status to record for it."""
+        ctx = self.ctx
+        if key == "understand":
+            self.repo_agent.execute(ctx)
+        elif key == "analyze":
+            self.bug_agent.execute(ctx)
+        elif key == "baseline":
+            self.critic.execute(ctx, mode="baseline")
+            # "done" only when tests really executed; otherwise show the step as failed, not as success
+            ran = ctx.baseline is not None and ctx.baseline.status in (V.PASSED, V.FAILED)
+            if not ran and ctx.baseline is not None:
+                self._note(f"baseline tests produced no results ({ctx.baseline.status.value}): "
+                           f"{ctx.baseline.checks[0].detail if ctx.baseline.checks else ''}")
+            return "done" if ran else "failed"
+        elif key == "prioritize":
+            # re-rank after the baseline: executed tests may have upgraded findings to Confirmed
+            ctx.findings = renumber(prioritize(ctx.findings))
+            confirmed = sum(1 for f in ctx.findings if f.extra.get("confirmed_by"))
+            self._note(f"Ranked {len(ctx.findings)} findings by severity and confidence "
+                       f"({confirmed} confirmed by executed tests)")
+        elif key == "advise":
+            self.advisor.execute(ctx)
+        else:
+            raise WorkflowError(f"unknown analysis step {key}")
+        return "done"
 
     # ------------------------------------------------------- patch proposal
     def select_finding(self, finding_id: str) -> WorkflowContext:
         ctx = self.ctx
+        if ctx.analysis_status is not A.COMPLETED:
+            raise WorkflowError(f"findings are not available: analysis is {ctx.analysis_status.value}")
         if ctx.snapshot is None or ctx.summary is None or ctx.finding(finding_id) is None:
             raise WorkflowError(f"unknown finding {finding_id}")
         if not states.can_transition(ctx.state, "finding_selected"):
@@ -130,6 +173,8 @@ class Orchestrator:
         ctx.selected_finding_id = finding_id
         ctx.retries = 0
         ctx.blocked_reason = ""
+        for key in PATCH_CYCLE_STEPS:          # a new cycle: earlier results belong to another finding
+            self._step(key, "pending")
         states.transition(ctx, "finding_selected", f"developer selected {finding_id}")
         try:
             self._propose_and_review(finding_id, feedback=None)
@@ -139,20 +184,22 @@ class Orchestrator:
 
     def _propose_and_review(self, finding_id: str, feedback: ValidationResult | None) -> None:
         ctx = self.ctx
+        critique: CriticReview | None = None
         while True:
-            out = self.improver.execute(ctx, finding_id=finding_id, feedback=feedback)
-            self._step("propose", "done")
+            out = self.improver.execute(ctx, finding_id=finding_id, feedback=feedback, critique=critique)
             if "no_fix" in out.outputs:
+                self._step("propose", "failed")
                 if not any(p.finding_id == finding_id for p in ctx.proposals):
                     states.transition(ctx, "no_fix_available", out.summary)
                 else:
                     ctx.blocked_reason = f"No remaining fix strategy for {finding_id}; escalated to the developer."
                     states.transition(ctx, "no_strategy_left", ctx.blocked_reason)
                 return
+            self._step("propose", "done")
             proposal = ctx.current_proposal
             self.critic.execute(ctx, mode="review", proposal=proposal)
-            self._step("review", "done")
             review = ctx.reviews[proposal.patch_id]
+            self._step("review", "done" if review.ok else "failed")
             if review.ok:
                 states.transition(ctx, "critic_approved", f"{proposal.patch_id} passed critic review")
                 self._step("approve", "pending")
@@ -163,6 +210,7 @@ class Orchestrator:
                 states.transition(ctx, "critic_retries_exhausted", ctx.blocked_reason)
                 return
             states.transition(ctx, "critic_rejected", "; ".join(review.issues))
+            critique = review              # the next proposal is built knowing why this one was rejected
 
     # -------------------------------------------------------------- approval
     def _proposal(self, patch_id: str) -> PatchProposal:
@@ -190,7 +238,8 @@ class Orchestrator:
             self._note(f"Applied {patch_id} to working copy only", (str(copy_root),))
             states.transition(ctx, "validation_started", "patch applied to isolated working copy")
             self.critic.execute(ctx, mode="validate", proposal=proposal, copy_root=copy_root)
-            self._step("validate", "done")
+            vres = ctx.latest_validation
+            self._step("validate", "failed" if vres is not None and vres.status in (V.BLOCKED, V.FAILED) else "done")
             self._after_validation(proposal)
         except (approval_mod.ApprovalError, PatchScopeError) as exc:
             states.force_blocked(ctx, f"Patch refused: {exc}")
@@ -224,6 +273,8 @@ class Orchestrator:
     def back_to_findings(self) -> WorkflowContext:
         if self.ctx.snapshot is None or self.ctx.summary is None:
             raise WorkflowError("nothing has been analysed yet")
+        if self.ctx.analysis_status not in (A.COMPLETED, A.STRUCTURE_ONLY):
+            raise WorkflowError(f"findings are not available: analysis is {self.ctx.analysis_status.value}")
         if not states.can_transition(self.ctx.state, "back_to_findings"):
             raise WorkflowError(f"cannot return to findings from {self.ctx.state.value}")
         states.transition(self.ctx, "back_to_findings", "developer returned to the findings list")

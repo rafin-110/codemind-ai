@@ -46,8 +46,13 @@ def render(orch) -> None:
                  disabled=ctx.state.value != "PLANNED"):
         with st.spinner("Agents working: understanding → risk analysis → baseline tests → advisor"):
             orch.analyze()
+        b = ctx.baseline
         if ctx.blocked_reason:
             ui.flash_error(ctx.blocked_reason)
+        elif b is not None and b.status.value in ("Not run", "Blocked"):
+            ui.flash_error(f"Analysis finished with {len(ctx.findings)} findings, but the baseline tests "
+                           f"produced no results: {b.checks[0].detail if b.checks else b.status.value}. "
+                           "Details are on Validation Results.")
         else:
             ui.flash_ok(f"Analysis finished: {len(ctx.findings)} findings. See Findings & Explainability.")
         st.rerun()

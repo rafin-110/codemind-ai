@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 # --- ingestion limits -------------------------------------------------------
@@ -31,7 +32,8 @@ LANGUAGE_BY_EXT = {
 
 # --- workflow ---------------------------------------------------------------
 MAX_RETRIES = 2            # failed validations that may be retried with a new strategy
-TEST_TIMEOUT_S = 60        # wall clock for one sandboxed pytest run
+# wall clock for one sandboxed pytest run; override with CODEMIND_TEST_TIMEOUT (seconds)
+TEST_TIMEOUT_S = int(os.environ.get("CODEMIND_TEST_TIMEOUT", "120") or 120)
 SYNTAX_TIMEOUT_S = 20
 
 # --- paths ------------------------------------------------------------------
@@ -42,6 +44,9 @@ DEFAULT_WORKSPACE = PROJECT_ROOT / "workspace"
 DEFAULT_REPORTS = PROJECT_ROOT / "reports"
 
 # --- optional LLM -----------------------------------------------------------
+# "mock" (default, no model) or "ollama". The LLM only rewords explanations; it never
+# approves, applies or validates patches and never changes workflow state.
+LLM_PROVIDER = (os.environ.get("CODEMIND_LLM", "mock") or "mock").lower()
 OLLAMA_URL = "http://localhost:11434"
 OLLAMA_MODEL = "llama3.2"
 OLLAMA_TIMEOUT_S = 30

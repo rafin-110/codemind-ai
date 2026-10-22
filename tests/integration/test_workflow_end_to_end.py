@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from codemind.models import ValidationStatus as V, WorkflowState as S
+from codemind.models import AnalysisStatus as A, ValidationStatus as V, WorkflowState as S
 from codemind.orchestrator.orchestrator import Orchestrator, WorkflowError
 from codemind.validation.report import build_json, build_markdown
 from tests.helpers import make_zip
@@ -71,7 +71,7 @@ def test_docs_only_repo_is_structure_only(tmp_path):
     o.load_zip(make_zip({"README.md": "# Notes\n\nJust notes.\n", "notes/todo.md": "- a\n"}), "docs.zip")
     o.analyze()
     c = o.ctx
-    assert c.state is S.FINDINGS_READY and c.findings == [] and c.analysis_status is V.NOT_RUN
+    assert c.state is S.FINDINGS_READY and c.findings == [] and c.analysis_status is A.STRUCTURE_ONLY
     assert c.plan.step_status["analyze"] == "skipped" and c.summary.title == "Notes"
 
 

@@ -24,9 +24,11 @@ class LLMAdapter:
         return LLMText(text, "deterministic")
 
 
-def get_default_llm() -> LLMAdapter:
-    """Mock by default. Set CODEMIND_LLM=ollama to try a local Ollama model."""
-    if os.environ.get("CODEMIND_LLM", "").lower() == "ollama":
+def get_default_llm(provider: str | None = None) -> LLMAdapter:
+    """Mock by default. Set CODEMIND_LLM=ollama (or pass provider) to try a local Ollama model."""
+    from codemind import config
+    provider = (provider or os.environ.get("CODEMIND_LLM") or config.LLM_PROVIDER).lower()
+    if provider == "ollama":
         from codemind.llm.ollama_llm import OllamaLLM
         return OllamaLLM()
     from codemind.llm.mock_llm import MockLLM

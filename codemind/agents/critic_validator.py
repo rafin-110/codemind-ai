@@ -63,11 +63,22 @@ class CriticValidatorAgent(Agent):
             return AgentOutput(f"Baseline tests not run: {why}", ["baseline: Not run"])
         copy_root = make_working_copy(ctx.snapshot, "baseline")
         out = sandbox_runner.run_pytest(copy_root)
-        status = (V.BLOCKED if out.timed_out else V.NOT_RUN if not out.ran
-                  else V.PASSED if out.failed + out.errors == 0 else V.FAILED)
-        ctx.baseline = ValidationResult("baseline", status, [], out.passed, out.failed, out.errors, out.skipped,
-                                        out.cases, out.output_tail, out.isolation_level, out.limitations,
-                                        working_copy=str(copy_root))
+        # "Passed" requires at least one test that really executed: zero results is never a pass.
+        executed = out.passed + out.failed + out.errors
+        if out.timed_out:
+            status = V.BLOCKED
+        elif not out.ran or executed == 0:
+            status = V.NOT_RUN
+        else:
+            status = V.PASSED if out.failed + out.errors == 0 else V.FAILED
+        reason = out.note or ("pytest produced no executed tests"
+                              if executed == 0 else f"{out.passed} passed, {out.failed} failed, {out.errors} errors")
+        if out.exit_code is not None and not out.timed_out:
+            reason += f" (pytest exit code {out.exit_code})"
+        ctx.baseline = ValidationResult(
+            "baseline", status, [CheckResult("Baseline tests on the original copy", status, reason, out.duration_s)],
+            out.passed, out.failed, out.errors, out.skipped, out.cases, out.output_tail, out.isolation_level,
+            out.limitations, working_copy=str(copy_root))
         confirmed = []
         for f in ctx.findings:
             # pytest prints OS-native paths (grades\stats.py on Windows), finding paths are POSIX
@@ -78,6 +89,8 @@ class CriticValidatorAgent(Agent):
                 f.verification = V.FAILED
                 f.extra["confirmed_by"] = linked
                 confirmed.append(f"{f.id} confirmed by {', '.join(linked)}")
+        if status in (V.NOT_RUN, V.BLOCKED):
+            return AgentOutput(f"Baseline tests did NOT produce results ({status.value}): {reason}", confirmed)
         return AgentOutput(
             f"Baseline on original: {out.passed} passed, {out.failed} failed, {out.errors} errors "
             f"({out.duration_s:.1f}s); {len(confirmed)} finding(s) confirmed by execution.", confirmed)
@@ -88,6 +101,9 @@ class CriticValidatorAgent(Agent):
         issues: list[str] = []
         known = {fi.rel_path: fi for fi in ctx.snapshot.included_files}
         in_scope = True
+        if ctx.selected_finding_id is not None and proposal.finding_id != ctx.selected_finding_id:
+            in_scope = False
+            issues.append(f"proposal targets {proposal.finding_id} but {ctx.selected_finding_id} is selected")
         for e in proposal.edits:
             if e.rel_path != f.file:
                 in_scope = False

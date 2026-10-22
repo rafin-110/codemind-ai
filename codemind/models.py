@@ -58,6 +58,15 @@ class ValidationStatus(str, enum.Enum):
     PARTIALLY_VERIFIED = "Partially verified"
 
 
+class AnalysisStatus(str, enum.Enum):
+    """Whether the analysis *ran*. Says nothing about whether the code is correct;
+    test outcomes live in `ValidationResult`, never here."""
+    NOT_STARTED = "Not started"
+    COMPLETED = "Completed"
+    STRUCTURE_ONLY = "Completed (structure only)"   # no Python: static rules not applicable
+    FAILED = "Failed"
+
+
 class WorkflowState(str, enum.Enum):
     RECEIVED = "RECEIVED"
     PLANNED = "PLANNED"
@@ -219,6 +228,8 @@ class PatchProposal:
     attempt: int = 1
     created_at: str = field(default_factory=utc_now)
     text_origin: str = "deterministic"
+    # what the Code Improvement Agent read from earlier agents (advisor, baseline, critic, validation)
+    context_used: list[str] = field(default_factory=list)
 
 
 def compute_patch_hash(edits: list[FileEdit], base_snapshot_hash: str) -> str:
@@ -294,6 +305,7 @@ class PlanStep:
     description: str
     enabled: bool = True
     reason: str = ""
+    depends_on: tuple[str, ...] = ()    # steps that must be "done" before this one may run
 
 
 @dataclass
@@ -344,7 +356,7 @@ class WorkflowContext:
     selected_finding_id: str | None = None
     retries: int = 0
     blocked_reason: str = ""
-    analysis_status: ValidationStatus = ValidationStatus.NOT_RUN
+    analysis_status: AnalysisStatus = AnalysisStatus.NOT_STARTED
     llm_label: str = "Mock LLM (deterministic text, no model used)"
 
     # convenience -----------------------------------------------------------

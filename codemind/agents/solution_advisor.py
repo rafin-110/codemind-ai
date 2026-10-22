@@ -44,6 +44,9 @@ class SolutionAdvisorAgent(Agent):
         current = kb["current"].format(**fields)
         assumptions = [f"Finding confidence is '{f.confidence.value}': "
                        + ("treat as a strong signal." if f.confidence.rank >= 2 else "confirm the risk before changing code.")]
+        if f.extra.get("confirmed_by"):
+            assumptions.append("Confirmed by executing the repository's tests: failing "
+                               + ", ".join(f.extra["confirmed_by"]) + ".")
         if has_tests:
             assumptions.append("The repository has tests, so a change can be validated by running them.")
         else:
@@ -60,7 +63,10 @@ class SolutionAdvisorAgent(Agent):
         if f.rule_id == "R006":
             assumptions.append("If the value was a real credential it is already exposed and must be rotated.")
 
-        rationale = self.llm.rephrase(kb["rationale"], context=f.title)
+        # the model only rewords; it is grounded in the finding's own evidence and never decides anything
+        rationale = self.llm.rephrase(kb["rationale"], context=(
+            f"{f.title} ({f.severity.value}, {f.confidence.value}) at {f.file}:{f.line}\n"
+            f"Evidence:\n{f.evidence.snippet}"))
         return Recommendation(
             finding_id=f.id, current_approach=current, alternatives=list(kb["alternatives"]),
             recommended=kb["recommended"], rationale=rationale.text, assumptions=assumptions,

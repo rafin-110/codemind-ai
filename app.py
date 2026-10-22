@@ -16,6 +16,12 @@ if "orch" not in st.session_state:
     st.session_state.orch = Orchestrator(workspace_root=config.DEFAULT_WORKSPACE)
 orch: Orchestrator = st.session_state.orch
 
+# A new repository gets a new run id; selections from the previous run must not leak into it.
+if st.session_state.get("_seen_run") != orch.ctx.run_id:
+    for _stale in ("finding_pick", "advisor_pick"):
+        st.session_state.pop(_stale, None)
+    st.session_state["_seen_run"] = orch.ctx.run_id
+
 PAGES = {
     "1. Overview": overview.render,
     "2. Upload & Explorer": upload.render,
