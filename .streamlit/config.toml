@@ -5,10 +5,10 @@ maxUploadSize = 20
 [browser]
 gatherUsageStats = false
 
-# Red wine and cream theme
+# Deep forest + teal theme (custom styles in ui/components.py use the same palette)
 [theme]
 base = "light"
-primaryColor = "#7B1E3A"
-backgroundColor = "#FBF5EA"
-secondaryBackgroundColor = "#F1E4CF"
-textColor = "#3B1420"
+primaryColor = "#0D9488"
+backgroundColor = "#F5F9F7"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#172B28"

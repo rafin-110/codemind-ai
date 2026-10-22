@@ -20,7 +20,7 @@ def render(orch) -> None:
                        "proposed patch on **Proposed Changes**. Validation runs only after you approve.")
     else:
         p = next(x for x in ctx.proposals if x.patch_id == v.patch_id)
-        ui.html("Status " + ui.status_pill(v.status))
+        ui.html(ui.status_pill(v.status))
         st.subheader(f"{v.patch_id}: {p.strategy_name} for {p.finding_id}")
         c1, c2, c3, c4 = st.columns(4)
         c1.metric("Tests passed", v.tests_passed)
@@ -38,9 +38,7 @@ def render(orch) -> None:
                     st.code(c.message, language="text")
         if v.isolation_level:
             st.caption(f"Test isolation: {v.isolation_level}")
-        st.markdown("**Limitations of this validation**")
-        for lim in dict.fromkeys(v.limitations):
-            st.write("- " + lim)
+        st.markdown("**Limitations of this validation**  \n" + "\n".join(f"- {x}" for x in dict.fromkeys(v.limitations)))
         if v.original_unchanged:
             st.success("Original files re-hashed after validation: unchanged.")
         with st.expander("Validation history"):

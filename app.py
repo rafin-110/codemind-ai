@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from html import escape as html_escape
+
 import streamlit as st
 
 from codemind import config
@@ -9,7 +11,7 @@ from codemind.orchestrator.orchestrator import Orchestrator
 from ui import components as ui
 from ui.views import advisor, changes, findings, overview, upload, validation, workflow
 
-st.set_page_config(page_title="CodeMind AI", page_icon="🧠", layout="wide")
+st.set_page_config(page_title="CodeMind AI", layout="wide")
 ui.inject_css()
 
 if "orch" not in st.session_state:
@@ -33,17 +35,19 @@ PAGES = {
 }
 
 with st.sidebar:
-    st.markdown("## 🧠 CodeMind AI")
-    st.caption("Agentic AI code review assistant: understand, debug and safely improve AI-generated code")
+    ui.html('<p class="cm-brand">CodeMind AI</p><p class="cm-brand-sub">Agentic code review assistant: '
+            'understand, debug and safely improve AI-generated code</p>')
+    st.divider()
     if "nav" in st.session_state.get("goto", {}):
         st.session_state.page = st.session_state.pop("goto")["nav"]
     page = st.radio("Navigate", list(PAGES), key="page", label_visibility="collapsed")
     st.divider()
-    ui.html("Workflow state<br>" + ui.state_pill(orch.ctx.state))
+    ui.html('<div class="cm-side-card"><p class="cm-side-label">Workflow state</p>'
+            + ui.state_pill(orch.ctx.state) + "</div>")
     if orch.ctx.snapshot:
-        st.caption(f"Repository: {orch.ctx.snapshot.display_name}")
-    st.caption(f"Explanations: {orch.ctx.llm_label}")
-    st.caption("Original files are never modified. Nothing is committed or pushed.")
+        ui.html('<div class="cm-side-card"><p class="cm-side-label">Repository</p>'
+                f'<span class="cm-side-value">{html_escape(orch.ctx.snapshot.display_name)}</span></div>')
+    ui.html('<p class="cm-side-note">Original files are never modified. Nothing is committed or pushed.</p>')
 
 ui.show_flash()
 PAGES[page](orch)

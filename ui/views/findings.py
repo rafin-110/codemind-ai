@@ -25,8 +25,8 @@ def render(orch) -> None:
     fid = st.selectbox("Finding details", ids, index=default, key="finding_pick",
                        format_func=lambda i: f"{i} · {ctx.finding(i).title.replace(chr(96), '')}")
     f = ctx.finding(fid)
-    ui.html(ui.severity_pill(f.severity) + ui.pill(f.confidence.value, "#9E2A4B") + ui.pill(f.category, "#475467")
-            + ui.pill(f.rule_id, "#344054"))
+    ui.html(ui.severity_pill(f.severity) + ui.pill(f"Confidence: {f.confidence.value}") + ui.pill(f.category)
+            + ui.pill(f.rule_id))
     st.markdown(f"#### {f.title}")
     st.caption(f"{f.file}, line {f.line} · {f.extra.get('detail', '')}")
     st.code(f.evidence.snippet, language="text")
@@ -53,4 +53,4 @@ def render(orch) -> None:
             ui.flash_error(str(exc))
         st.rerun()
     if not allowed:
-        st.caption(f"A proposal is in progress (state {ctx.state.value}). Finish it on Proposed Changes first.")
+        st.caption(f"A proposal is in progress ({ui.state_label(ctx.state)}). Finish it on Proposed Changes first.")

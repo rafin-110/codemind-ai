@@ -37,9 +37,9 @@ def render(orch) -> None:
             st.error("Critic review issues: " + "; ".join(review.issues))
 
     note = st.text_input("Optional note for the decision log", key=f"note_{p.patch_hash[:12]}")
-    col1, col2, _ = st.columns([1, 1, 3])
-    approve = col1.button("✅ Approve and validate", key=f"approve_{p.patch_hash}", type="primary", disabled=not awaiting)
-    reject = col2.button("✖ Reject", key=f"reject_{p.patch_hash}", disabled=not awaiting)
+    col1, col2, _ = st.columns([2, 1, 3])
+    approve = col1.button("Approve and validate", key=f"approve_{p.patch_hash}", type="primary", disabled=not awaiting)
+    reject = col2.button("Reject", key=f"reject_{p.patch_hash}", disabled=not awaiting)
     if approve or reject:
         try:
             if approve:
@@ -62,7 +62,7 @@ def render(orch) -> None:
         st.rerun()
     if not awaiting:
         decision = next((x.decision for x in reversed(ctx.approvals) if x.patch_id == p.patch_id), None)
-        st.caption(f"This proposal is no longer awaiting a decision ({decision or ctx.state.value}).")
+        st.caption(f"This proposal is no longer awaiting a decision ({decision or ui.state_label(ctx.state)}).")
 
     if len(ctx.proposals) > 1:
         with st.expander(f"Proposal history ({len(ctx.proposals)})"):

@@ -24,8 +24,6 @@ def render(orch) -> None:
         st.success("Keeping the current approach is acceptable here. " + r.next_action)
     st.markdown(f"**Recommended:** {r.recommended}")
     st.markdown(f"**Why:** {r.rationale}")
-    st.markdown("**Assumptions**")
-    for a in r.assumptions:
-        st.write("- " + a)
+    st.markdown("**Assumptions**  \n" + "\n".join(f"- {a}" for a in r.assumptions))
     st.markdown(f"**Next action:** {r.next_action}")
     st.caption(f"Text origin: {r.text_origin}")

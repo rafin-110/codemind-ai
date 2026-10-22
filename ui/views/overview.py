@@ -9,17 +9,18 @@ def render(orch) -> None:
     ctx = orch.ctx
     st.title("CodeMind AI")
     st.caption("An Agentic AI Code Review Assistant for Understanding, Debugging, and Improving AI-Generated Code")
-    ui.html('<div class="cm-flow"><span>ANALYZE</span>→<span>EXPLAIN WITH EVIDENCE</span>→'
-            '<span>COMPARE SOLUTIONS</span>→<span>HUMAN APPROVAL</span>→<span>APPLY TO COPY</span>→'
-            '<span>VALIDATE</span>→<span>REPORT</span></div>')
-    st.write("")
+    steps = ["Analyze", "Explain with evidence", "Compare solutions", "Human approval", "Apply to copy",
+             "Validate", "Report"]
+    ui.html('<div class="cm-steps">' + "<i>&rarr;</i>".join(f"<span>{s}</span>" for s in steps) + "</div>")
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Workflow state", ctx.state.value.replace("_", " ").title())
+    with c1:
+        ui.status_card("Workflow state", ui.state_pill(ctx.state))
     c2.metric("Files analysed", len(ctx.snapshot.included_files) if ctx.snapshot else 0)
     c3.metric("Findings", len(ctx.findings))
     v = ctx.latest_validation
-    c4.metric("Latest validation", v.status.value if v else "None yet")
+    with c4:
+        ui.status_card("Latest validation", ui.status_pill(v.status) if v else ui.pill("None yet"))
 
     if ctx.blocked_reason:
         st.error(f"Blocked: {ctx.blocked_reason}")
@@ -42,7 +43,7 @@ def render(orch) -> None:
         if counts:
             order = [sev.value for sev in Severity if sev.value in counts]
             st.bar_chart({"severity": order, "findings": [counts[o] for o in order]}, x="severity", y="findings",
-                         horizontal=True, height=180, sort=False)
+                         horizontal=True, height=180, sort=False, color=ui.TEAL)
         else:
             st.write("No rule matched. That is not proof the code is correct.")
     ui.baseline_panel(ctx)
