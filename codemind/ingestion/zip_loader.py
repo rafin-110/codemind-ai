@@ -148,6 +148,10 @@ def ingest_zip(data: bytes, run_dir: Path, *, source: str = "zip", display_name:
         raise
 
     included = [f for f in files if f.skipped_reason is None]
+    run_copies = sum(1 for f in files if f.skipped_reason == file_filter.GENERATED_RUN_COPY)
+    if run_copies:
+        warnings.append(f"skipped {run_copies} file(s) in CodeMind run folders (earlier analysis copies, "
+                        "not source code)")
     if not included:
         warnings.append("no analysable text files after filtering")
     make_read_only(original)

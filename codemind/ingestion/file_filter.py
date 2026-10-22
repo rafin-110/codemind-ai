@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import fnmatch
+import re
 from pathlib import PurePosixPath
 
 from codemind import config
@@ -27,6 +28,20 @@ def ignored_dir(rel_path: str) -> str | None:
     return None
 
 
+GENERATED_RUN_COPY = "generated CodeMind run copy (not source)"
+
+# CodeMind's own run layout: <workspace>/<12-hex run id>/original/... and working_copy_<label>[...]
+# (plus working_copy_<label>_home/ and working_copy_<label>_junit.xml). Uploading a project that
+# contains old runs would otherwise analyse every copy as if it were source code. Only this exact
+# layout is matched, so a real `workspace/` package in a user's project is still analysed.
+_RUN_COPY = re.compile(
+    rf"(?:^|/){re.escape(config.DEFAULT_WORKSPACE.name)}/[0-9a-f]{{12}}/(?:original|working_copy_[^/]+)(?:/|$)")
+
+
+def generated_run_copy(rel_path: str) -> bool:
+    return _RUN_COPY.search(rel_path) is not None
+
+
 def looks_binary(head: bytes) -> bool:
     if b"\x00" in head:
         return True
@@ -43,6 +58,8 @@ def skip_reason_by_path(rel_path: str, size: int) -> str | None:
     d = ignored_dir(rel_path)
     if d:
         return f"ignored directory '{d}'"
+    if generated_run_copy(rel_path):
+        return GENERATED_RUN_COPY
     if is_sensitive_name(rel_path):
         return "sensitive file (content not read)"
     if size > config.MAX_FILE_BYTES:
